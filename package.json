@@ -1,0 +1,27 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "chat app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev -p 29572",
+    "build": "next build",
+    "start": "next start -p 29572",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Y3llow45/chat-app.git"
+  },
+  "author": "Y3llow45",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Y3llow45/chat-app/issues"
+  },
+  "homepage": "https://github.com/Y3llow45/chat-app#readme",
+  "dependencies": {
+    "next": "^13.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
