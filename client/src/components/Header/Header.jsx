@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
 import './Header.css';
 import logo from '../../assets/logo.png';
-import userPic from '../../assets/logo.png';
+import userPic from '../../assets/user.jpg';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,44 +16,38 @@ const Header = () => {
     <header className="header-container">
       <div className="logo">
         <NavLink to="/">
-          <img src={logo} alt="Logo" />
+          <img src={logo} alt="Logo" className="logo-img" />
         </NavLink>
       </div>
 
-      {/* Mid-right links */}
       <nav className="nav-links">
-        <NavLink to="/chats">Chats</NavLink>
-        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">
-          Github
-        </a>
-        <NavLink to="/register">Register</NavLink>
-        <NavLink to="/login">Login</NavLink>
+        <NavLink to="/chats" className="nav-link">Chats</NavLink>
+        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer" className="nav-link">GitHub</a>
+        <NavLink to="/register" className="nav-link">Register</NavLink>
+        <NavLink to="/login" className="nav-link">Login</NavLink>
       </nav>
 
-      {/* Profile Picture and Dropdown */}
-      <div className="user-profile" onClick={toggleDropdown}>
+      <div className="profile-container" onClick={toggleDropdown}>
         <img src={userPic} alt="User Profile" className="profile-pic" />
         {isDropdownOpen && (
           <div className="dropdown-menu">
-            <NavLink to="/settings">Settings</NavLink>
+            <NavLink to="/settings" className="dropdown-link">Settings</NavLink>
           </div>
         )}
       </div>
 
-      {/* Burger Menu on the very right */}
+      {/* Burger Menu for small screens */}
       <Menu
         isOpen={isMenuOpen}
         onStateChange={({ isOpen }) => setIsMenuOpen(isOpen)}
         menuClassName="slide-menu"
         right
       >
-        <div className="hamburger-links">
-          <NavLink to="/" className="nav-link-hamburger" onClick={toggleMenu}>Home</NavLink>
-          <NavLink to="/chats" className="nav-link-hamburger" onClick={toggleMenu}>Chats</NavLink>
-          <a href="https://github.com/your-repo-link" className="nav-link-hamburger" onClick={toggleMenu} target="_blank" rel="noopener noreferrer">Github</a>
-          <NavLink to="/register" className="nav-link-hamburger" onClick={toggleMenu}>Register</NavLink>
-          <NavLink to="/login" className="nav-link-hamburger" onClick={toggleMenu}>Login</NavLink>
-        </div>
+        <NavLink to="/" className="nav-link-hamburger" onClick={toggleMenu}>Home</NavLink>
+        <NavLink to="/chats" className="nav-link-hamburger" onClick={toggleMenu}>Chats</NavLink>
+        <a href="https://github.com/your-repo-link" className="nav-link-hamburger" onClick={toggleMenu}>GitHub</a>
+        <NavLink to="/register" className="nav-link-hamburger" onClick={toggleMenu}>Register</NavLink>
+        <NavLink to="/login" className="nav-link-hamburger" onClick={toggleMenu}>Login</NavLink>
       </Menu>
     </header>
   );
