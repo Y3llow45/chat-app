@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
 import './Header.css';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/new_logo.png';
 import userPic from '../../assets/user.jpg';
 
 const Header = () => {
