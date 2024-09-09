@@ -4,31 +4,38 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #333;
+  background-color: #212121;
   color: white;
-  position: relative;
 }
 
-.logo img {
+.logo {
+  flex: 1;
+}
+
+.logo-img {
   height: 40px;
 }
 
 .nav-links {
   display: flex;
+  justify-content: center;
+  flex: 2;
   gap: 20px;
 }
 
-.nav-links a {
+.nav-link {
   color: white;
   text-decoration: none;
   font-size: 1rem;
 }
 
-.nav-links a:hover {
+.nav-link:hover {
   text-decoration: underline;
 }
 
-.user-profile {
+.profile-container {
+  display: flex;
+  align-items: center;
   position: relative;
   cursor: pointer;
 }
@@ -46,35 +53,79 @@
   background-color: #444;
   padding: 10px;
   border-radius: 5px;
+  z-index: 1;
 }
 
-.dropdown-menu a {
+.dropdown-link {
   color: white;
   text-decoration: none;
-  display: block;
-  padding: 5px 0;
 }
 
-.dropdown-menu a:hover {
+.dropdown-link:hover {
   text-decoration: underline;
 }
 
-/* Hamburger Menu */
-.bm-menu-wrap {
-  top: 0;
+/* Hamburger Menu Styles */
+.bm-burger-button {
+  position: relative;
+  width: 36px;
+  height: 30px;
+}
+
+.bm-burger-bars {
+  background: white;
+}
+
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+.bm-cross {
+  background: white;
+}
+
+.bm-menu {
+  background: #373a47;
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+}
+
+.bm-morph-shape {
+  fill: #373a47;
 }
 
 .bm-item-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+}
+
+.bm-item {
+  color: white;
+  text-decoration: none;
+}
+
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .nav-link-hamburger {
   color: white;
   text-decoration: none;
+  font-size: 1.2rem;
+  margin-top: 20px;
 }
 
-.nav-link-hamburger:hover {
-  text-decoration: underline;
+/* Responsive Design */
+@media (max-width: 768px) {
+
+  .nav-links,
+  .profile-container {
+    display: none;
+  }
+
+  .bm-burger-button {
+    display: block;
+  }
 }
