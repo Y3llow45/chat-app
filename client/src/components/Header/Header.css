@@ -1,4 +1,3 @@
-/* Header.css */
 .header-container {
   display: flex;
   justify-content: space-between;
@@ -91,6 +90,10 @@
   font-size: 1.15em;
 }
 
+.bm-burger-button {
+  display: none;
+}
+
 .bm-morph-shape {
   fill: #373a47;
 }
@@ -117,7 +120,13 @@
   margin-top: 20px;
 }
 
-/* Responsive Design */
+.bm-menu-wrap {
+  top: 72px;
+  right: 0;
+  width: 250px;
+  height: auto;
+}
+
 @media (max-width: 768px) {
 
   .nav-links,
@@ -127,5 +136,9 @@
 
   .bm-burger-button {
     display: block;
+  }
+
+  .nav-link-hamburger {
+    font-size: 1.5rem;
   }
 }
