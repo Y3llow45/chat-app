@@ -36,7 +36,6 @@ const Header = () => {
         )}
       </div>
 
-      {/* Burger Menu for small screens */}
       <Menu
         isOpen={isMenuOpen}
         onStateChange={({ isOpen }) => setIsMenuOpen(isOpen)}
