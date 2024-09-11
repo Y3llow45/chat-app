@@ -1,0 +1,29 @@
+.home-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.computer {
+  width: 100px;
+}
+
+.computer.left {
+  position: absolute;
+  left: 0;
+}
+
+.computer.right {
+  position: absolute;
+  right: 0;
+}
+
+.mail {
+  width: 50px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
