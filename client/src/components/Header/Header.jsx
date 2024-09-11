@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
 import './Header.css';
-import logo from '../../assets/new_logo.png';
+import logo from '../../assets/logo.png';
 import userPic from '../../assets/user.jpg';
 
 const Header = () => {
@@ -15,8 +15,9 @@ const Header = () => {
   return (
     <header className="header-container">
       <div className="logo">
-        <NavLink to="/">
+        <NavLink to="/" style={{ "display": "flex" }}>
           <img src={logo} alt="Logo" className="logo-img" />
+          <h2 className='logo-text'>Chato</h2>
         </NavLink>
       </div>
 
@@ -48,7 +49,7 @@ const Header = () => {
         <NavLink to="/register" className="nav-link-hamburger" onClick={toggleMenu}>Register</NavLink>
         <NavLink to="/login" className="nav-link-hamburger" onClick={toggleMenu}>Login</NavLink>
       </Menu>
-    </header>
+    </header >
   );
 };
 

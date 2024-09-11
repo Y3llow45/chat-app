@@ -3,19 +3,28 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #00144C;
+  background-color: #ffffff;
   color: white;
   position: sticky;
   top: 0;
-  border-bottom: 2px #4D4D4D solid;
 }
 
 .logo {
   flex: 1;
+
+}
+
+.logo-text {
+  font-size: 24px;
+  color: black;
+  margin-left: 1rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .logo-img {
-  height: 40px;
+  height: 50px;
+  margin-left: 2rem;
 }
 
 .nav-links {
@@ -26,14 +35,14 @@
 }
 
 .nav-link {
-  color: white;
+  color: rgb(0, 0, 0);
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 }
 
 .nav-link:hover {
   text-decoration: none;
-  color: rgb(255, 213, 213);
+  color: rgb(10, 0, 120);
 }
 
 .profile-container {
@@ -68,7 +77,6 @@
   text-decoration: underline;
 }
 
-/* Hamburger Menu Styles */
 .bm-burger-button {
   position: relative;
   width: 36px;
@@ -76,7 +84,7 @@
 }
 
 .bm-burger-bars {
-  background: white;
+  background: rgb(0, 0, 0);
 }
 
 .bm-cross-button {
