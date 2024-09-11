@@ -4,11 +4,12 @@
   align-items: center;
   position: relative;
   padding: 20px;
-  height: 200px;
+  background-color: #484848;
 }
 
 .computer {
   width: 100px;
+  z-index: 2;
 }
 
 .computer.left {
@@ -24,6 +25,6 @@
 .mail {
   width: 50px;
   position: absolute;
-  top: 50%;
   transform: translateY(-50%);
+  z-index: 1;
 }
