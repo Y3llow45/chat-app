@@ -9,7 +9,7 @@ const Home = () => {
         <motion.h1
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2 }}
+          transition={{ duration: 1.5 }}
           className="home-title"
         >
           Welcome to Chato
@@ -19,7 +19,6 @@ const Home = () => {
           Connect with friends securely and enjoy seamless communication.
         </p>
       </header>
-
       <section className="tech-section">
         <h2 className="section-title">Technologies Used</h2>
         <div className="tech-list">
@@ -37,7 +36,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
       <section className="image-gallery">
         <h2 className="section-title">Project Images</h2>
         <div className="gallery">
@@ -45,10 +43,6 @@ const Home = () => {
           <img src="/path-to/image2.png" alt="Feature 2" className="gallery-img" />
         </div>
       </section>
-
-      <footer className="home-footer">
-        <p>© 2024 ChatApp. All rights reserved.</p>
-      </footer>
     </div>
   );
 };
