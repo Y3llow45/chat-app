@@ -5,6 +5,8 @@
   position: relative;
   padding: 20px;
   background-color: #484848;
+  height: 150px;
+  overflow: hidden;
 }
 
 .computer {
