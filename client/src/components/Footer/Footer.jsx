@@ -1,7 +1,23 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import './Footer.css';
 
 function Footer() {
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  const handleResize = () => {
+    setScreenWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    console.log(screenWidth)
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  const startX = -100;
+  const middleX = screenWidth * 0.45;
+  const endX = screenWidth * 0.95;
+
   return (
     <footer className="home-footer">
       <img src="/src/assets/pc.png" alt="Computer Left" className="computer left" />
@@ -9,8 +25,15 @@ function Footer() {
         src="/src/assets/mail.png"
         alt="Mail"
         className="mail"
-        animate={{ x: ["50%", "1500%", "2800%"] }}
+        animate={{ x: [startX, middleX, endX] }}
         transition={{ duration: 1, repeat: Infinity, repeatType: "loop" }}
+      />
+      <motion.img
+        src="/src/assets/mail.png"
+        alt="Mail"
+        className="mail reverse"
+        animate={{ x: [endX, middleX, startX] }}
+        transition={{ duration: 3, repeat: Infinity, repeatType: "loop" }}
       />
       <img src="/src/assets/pc.png" alt="Computer Right" className="computer right" />
     </footer>
