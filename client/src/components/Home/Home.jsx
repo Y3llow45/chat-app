@@ -23,15 +23,15 @@ const Home = () => {
         <h2 className="section-title">Technologies Used</h2>
         <div className="tech-list">
           <div className="tech-item">
-            <img src="/path-to/react-logo.png" alt="React" className="tech-logo" />
+            <img src="/src/assets/react.svg" alt="React" className="tech-logo" />
             <p>React</p>
           </div>
           <div className="tech-item">
-            <img src="/path-to/nextjs-logo.png" alt="Next.js" className="tech-logo" />
+            <img src="/src/assets/nextjs.svg" alt="Next.js" className="tech-logo" />
             <p>Next.js</p>
           </div>
           <div className="tech-item">
-            <img src="/path-to/socketio-logo.png" alt="Socket.io" className="tech-logo" />
+            <img src="/src/assets/socket.png" alt="Socket.io" className="tech-logo" />
             <p>Socket.io</p>
           </div>
         </div>

@@ -1,9 +1,8 @@
 .home-container {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Poppins', sans-serif;
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-
   min-height: 100vh;
 }
 
@@ -16,7 +15,7 @@
 .home-title {
   font-size: 3rem;
   margin-bottom: 10px;
-  color: #ffffff;
+  color: #000000;
 }
 
 .home-description {
@@ -46,6 +45,8 @@
 
 .tech-item {
   text-align: center;
+  color: black;
+  padding: 20px;
 }
 
 .tech-logo {
