@@ -26,16 +26,17 @@ function Footer() {
         alt="Mail"
         className="mail"
         animate={{ x: [startX, middleX, endX] }}
-        transition={{ duration: 1, repeat: Infinity, repeatType: "loop" }}
+        transition={{ duration: 2, repeat: Infinity, repeatType: "loop" }}
       />
+      <img src="/src/assets/server.jpg" alt="server" className="server" style={{ width: "5rem" }} />
       <motion.img
         src="/src/assets/mail.png"
         alt="Mail"
-        className="mail reverse"
+        className="mail"
         animate={{ x: [endX, middleX, startX] }}
         transition={{ duration: 3, repeat: Infinity, repeatType: "loop" }}
       />
-      <img src="/src/assets/pc.png" alt="Computer Right" className="computer right" />
+      <img src="/src/assets/pc2.png" alt="Computer Right" className="computer right" />
     </footer>
   );
 }
