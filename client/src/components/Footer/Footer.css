@@ -7,6 +7,7 @@
   background-color: #484848;
   height: 150px;
   overflow: hidden;
+  margin-top: 50px;
 }
 
 .computer {
@@ -37,4 +38,10 @@
   position: absolute;
   transform: translateY(-50%);
   z-index: 1;
+}
+
+.rights {
+  margin: auto;
+  margin-top: 8rem;
+  margin-bottom: 5px;
 }

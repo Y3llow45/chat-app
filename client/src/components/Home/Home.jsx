@@ -36,11 +36,12 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section className="image-gallery">
-        <h2 className="section-title">Project Images</h2>
-        <div className="gallery">
-          <img src="/path-to/image1.png" alt="Feature 1" className="gallery-img" />
-          <img src="/path-to/image2.png" alt="Feature 2" className="gallery-img" />
+      <section className="encryption-section">
+        <h2 className="section-title">How Encryption Works</h2>
+        <div>
+          <p className='home-description'>
+            Encryption is the process of converting plain text into ciphertext to protect your messages. This ensures that only the intended recipient can read the message after decrypting it. In our chat app, we use end-to-end encryption, which means that messages are encrypted on your device and only decrypted by the recipient.
+          </p>
         </div>
       </section>
     </div>

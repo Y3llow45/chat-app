@@ -37,6 +37,8 @@ function Footer() {
         transition={{ duration: 3, repeat: Infinity, repeatType: "loop" }}
       />
       <img src="/src/assets/pc2.png" alt="Computer Right" className="computer right" />
+      <br />
+      <p className='rights'>© 2024 ChatApp. All rights reserved.</p>
     </footer>
   );
 }
