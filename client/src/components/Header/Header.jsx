@@ -23,7 +23,7 @@ const Header = () => {
 
       <nav className="nav-links">
         <NavLink to="/chats" className="nav-link">Chats</NavLink>
-        <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer" className="nav-link">GitHub</a>
+        <a href="https://github.com/Y3llow45/chat-app" target="_blank" rel="noopener noreferrer" className="nav-link">GitHub</a>
         <NavLink to="/register" className="nav-link">Register</NavLink>
         <NavLink to="/login" className="nav-link">Login</NavLink>
       </nav>

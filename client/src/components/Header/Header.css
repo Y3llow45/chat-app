@@ -12,6 +12,7 @@
   color: white;
   position: sticky;
   top: 0;
+  border-bottom: 1px solid #ebeaeb;
 }
 
 .logo {
@@ -47,7 +48,7 @@
 
 .nav-link:hover {
   text-decoration: none;
-  color: rgb(10, 0, 120);
+  color: rgb(39, 148, 226);
 }
 
 .profile-container {
@@ -65,9 +66,9 @@
 
 .dropdown-menu {
   position: absolute;
-  top: 50px;
-  right: 0;
-  background-color: #444;
+  top: 56px;
+  right: 0px;
+  background-color: #484848;
   padding: 10px;
   border-radius: 5px;
   z-index: 1;
@@ -79,7 +80,7 @@
 }
 
 .dropdown-link:hover {
-  text-decoration: underline;
+  color: rgb(39, 148, 226);
 }
 
 .bm-burger-button {
