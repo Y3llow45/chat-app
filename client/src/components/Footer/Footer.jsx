@@ -11,7 +11,6 @@ function Footer() {
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
-    console.log(screenWidth)
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   const startX = -100;

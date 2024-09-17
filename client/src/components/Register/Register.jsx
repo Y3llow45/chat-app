@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Register.css';
-import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
+import { NavLink } from 'react-router-dom';
 import { signUp, checkDuplicate } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
 import { handleInputChangeComponent } from '../Form/handleInputChange/handleInputChange';
