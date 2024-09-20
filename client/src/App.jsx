@@ -11,7 +11,7 @@ import Footer from './components/Footer/Footer';
 function App() {
   return (
     <div className="App">
-      <Router>
+      <>
         <ToastContainer
           className="add-toast-container"
           position="top-right"
@@ -33,7 +33,7 @@ function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
         <Footer />
-      </Router>
+      </>
     </div>
   )
 }
