@@ -2,16 +2,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 84vh;
 }
 
 .signup-container {
   background-color: white;
   padding: 2rem;
+  padding-top: 0px;
   width: 400px;
   border-radius: 12px;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
   text-align: center;
+  margin: 0 auto;
 }
 
 .form-tittle {
@@ -24,10 +26,11 @@
 .signup-form {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .input-form {
-  width: 100%;
+  width: 90%;
   padding: 8px;
   margin-bottom: 1rem;
   border: 1px solid #575757;
@@ -44,7 +47,7 @@
 
 .form-submit {
   padding: 10px 0;
-  width: 100%;
+  width: 50%;
   background-color: #007bff;
   color: white;
   border: none;

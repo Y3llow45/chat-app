@@ -2,7 +2,7 @@ import React from 'react';
 
 const FormComponent = ({ username, password, handleInputChange, checkFunc }) => {
   return (
-    <div>
+    <>
       <input
         type="text"
         name="username"
@@ -22,7 +22,7 @@ const FormComponent = ({ username, password, handleInputChange, checkFunc }) => 
         className='input-form'
         required
       />
-    </div>
+    </>
   );
 }
 
