@@ -90,6 +90,18 @@ app.get('/checkUsername/:username', async (req, res) => {
   }
 });
 
+app.get('/api/getUserRole', verifyToken, async (req, res) => {
+  try {
+    const username = req.username;
+    const user = await User.findOne({ username });
+    res.status(200).json({ role: user._doc.role });
+  }
+  catch (error) {
+    console.log(error);
+    res.status(401).json({ message: 'server error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)
 })
