@@ -1,4 +1,4 @@
-import { displayInfo, displaySuccess } from '../components/Notify/Notify';
+import { displayInfo } from '../components/Notify/Notify';
 const url = 'http://localhost:5242/';
 
 export const getRole = () => {
@@ -14,7 +14,36 @@ export const getRole = () => {
     );
 }
 
+export const signUp = (username, email, password) => {
+  let user = {
+    username,
+    email,
+    password,
+  };
 
+  return fetch(`${url}signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user)
+  });
+};
+
+export const signIn = (username, password) => {
+  let user = {
+    username,
+    password,
+  };
+
+  return fetch(`${url}signin`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user)
+  })
+};
 
 export const checkDuplicate = (type, username) => {
   return fetch(`${url}check/${type}/${username}`, {
