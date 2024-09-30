@@ -1,10 +1,12 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+const SPORT = parseInt(process.env.SPORT, 10)
 
 io.on('connection', (socket) => {
   console.log('A user connected');
@@ -19,6 +21,6 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+server.listen(SPORT, () => {
+  console.log(`Socket server is listening on port: ${SPORT}`);
 });
