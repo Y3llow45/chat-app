@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const generateToken = require('./services/genToken');
 const bodyParser = require('body-parser');
 const User = require("./models/User");
+const verifyToken = require('./middleware/verifyToken')
 
 const app = express()
 const PORT = parseInt(process.env.PORT, 10)
@@ -76,20 +77,6 @@ app.post('/login', async (req, res) => {
   }
 })
 
-app.get('/checkUsername/:username', async (req, res) => {
-  try {
-    let { username } = req.params;
-    user = await User.findOne({ username: input });
-    if (!lesson) {
-      return res.status(200).json({ message: 'false' });
-    } else {
-      return res.status(200).json({ message: 'true' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 app.get('/api/getUserRole', verifyToken, async (req, res) => {
   try {
     const username = req.username;
@@ -99,6 +86,33 @@ app.get('/api/getUserRole', verifyToken, async (req, res) => {
   catch (error) {
     console.log(error);
     res.status(401).json({ message: 'server error' });
+  }
+});
+
+app.get('/check/:type/:input', async (req, res) => {
+  try {
+    let { type, input } = req.params;
+    let user;
+    let lesson;
+    if (type == 'Username') {
+      user = await User.findOne({ username: input });
+    } else if (type == 'Email') {
+      user = await User.findOne({ email: input });
+    } else if (type == 'Title') {
+      lesson = await Lesson.findOne({ title: input })
+      if (!lesson) {
+        return res.status(200).json({ message: 'false' });
+      }
+      return res.status(200).json({ message: 'true' });
+    } else {
+      return res.status(404).json({ message: 'No such type' });
+    }
+    if (!user) {
+      return res.status(200).json({ message: 'false' });
+    }
+    return res.status(200).json({ message: 'true' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
