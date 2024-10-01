@@ -5,6 +5,8 @@ import { signUp, checkDuplicate } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
 import { handleInputChangeComponent } from '../Form/handleInputChange/handleInputChange';
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify';
+import { useHistory } from "react-router-dom";
+
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/;
 
 class Register extends Component {
@@ -14,9 +16,12 @@ class Register extends Component {
     this.state = {
       username: '',
       email: '',
-      password: ''
+      password: '',
+      history: useHistory()
     };
   }
+
+
 
   componentDidMount() {
     document.getElementById("email").addEventListener("blur", this.checkEmail);
@@ -52,7 +57,9 @@ class Register extends Component {
           const { message } = await res.json();
           if (res.status === 201) {
             displaySuccess("Account created")
-            this.props.history.push('/signin')
+            //this.props.history.push('/signin')
+            //this.props.navigate('/signin');
+            this.state.history.push("/signin")
           } else if (res.status === 400) {
             displayInfo(`${message}`)
           }
@@ -100,4 +107,4 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default withRouter(Register);

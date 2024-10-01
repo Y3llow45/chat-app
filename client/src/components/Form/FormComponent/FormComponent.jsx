@@ -1,6 +1,4 @@
-import React from 'react';
-
-const FormComponent = ({ username, password, handleInputChange, checkFunc }) => {
+const FormComponent = ({ username, password, handleInputChange }) => {
   return (
     <>
       <input
