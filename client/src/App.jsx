@@ -8,10 +8,11 @@ import Login from './components/Login/Login';
 import Chats from './components/Chats/Chats';
 import Footer from './components/Footer/Footer';
 
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
   return (
     <div className="App">
-      <div style={{ paddingTop: '48px' }}></div>
       <ToastContainer
         className="add-toast-container"
         position="top-right"
