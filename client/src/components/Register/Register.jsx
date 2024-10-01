@@ -5,7 +5,7 @@ import { signUp, checkDuplicate } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
 import { handleInputChangeComponent } from '../Form/handleInputChange/handleInputChange';
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify';
-import { useHistory } from "react-router-dom";
+import withRouter from './Nav';
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/;
 
@@ -17,11 +17,8 @@ class Register extends Component {
       username: '',
       email: '',
       password: '',
-      history: useHistory()
     };
   }
-
-
 
   componentDidMount() {
     document.getElementById("email").addEventListener("blur", this.checkEmail);
@@ -59,7 +56,12 @@ class Register extends Component {
             displaySuccess("Account created")
             //this.props.history.push('/signin')
             //this.props.navigate('/signin');
-            this.state.history.push("/signin")
+            //this.props.navigate('/signin');
+            //redirect('/singin')
+            //nav()
+            const { navigate } = this.props;
+            // Navigate to Another Component
+            navigate("/singin");
           } else if (res.status === 400) {
             displayInfo(`${message}`)
           }
