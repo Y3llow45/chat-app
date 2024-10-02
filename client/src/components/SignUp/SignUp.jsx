@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Register.css';
+import './SignUp.css';
 import { NavLink } from 'react-router-dom';
 import { signUp, checkDuplicate } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
@@ -10,7 +10,7 @@ import navWrap from '../Form/NavWrap/NavWrap';
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/;
 
 
-class Register extends Component {
+class SignUp extends Component {
   constructor(props) {
     super(props);
 
@@ -104,4 +104,4 @@ class Register extends Component {
   }
 }
 
-export default navWrap(Register);
+export default navWrap(SignUp);
