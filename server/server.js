@@ -20,7 +20,8 @@ mongoose.connect(AtlasUri).then(() => {
   console.log('Connected to db');
 })
 
-app.post('/register', async (req, res) => {
+app.post('/signup', async (req, res) => {
+  console.log('here at singup')
   try {
     let { username, password } = req.body;
     const testUsername = await User.find({ username: username })
@@ -33,7 +34,7 @@ app.post('/register', async (req, res) => {
     bcrypt
       .hash(password, saltRounds)
       .then(hash => {
-        let newUser = new User({ username: username, password: hash })
+        let newUser = new User({ username: username, password: hash, role: 'user' })
         console.log('before saving')
         newUser.save();
         console.log('saved')
