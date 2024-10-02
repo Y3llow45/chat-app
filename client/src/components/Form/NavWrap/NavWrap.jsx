@@ -1,6 +1,6 @@
 import { useNavigate, } from 'react-router-dom';
 
-const withRouter = WrappedComponent => props => {
+const navWrap = WrappedComponent => props => {
   const navigate = useNavigate();
 
   return (
@@ -11,4 +11,4 @@ const withRouter = WrappedComponent => props => {
   );
 };
 
-export default withRouter;
+export default navWrap;

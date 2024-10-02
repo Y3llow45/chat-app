@@ -5,9 +5,10 @@ import { signUp, checkDuplicate } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
 import { handleInputChangeComponent } from '../Form/handleInputChange/handleInputChange';
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify';
-import withRouter from './Nav';
+import navWrap from '../Form/NavWrap/NavWrap';
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/;
+
 
 class Register extends Component {
   constructor(props) {
@@ -52,15 +53,9 @@ class Register extends Component {
       signUp(this.state.username, this.state.email, this.state.password)
         .then(async (res) => {
           const { message } = await res.json();
+          const { navigate } = this.props;
           if (res.status === 201) {
             displaySuccess("Account created")
-            //this.props.history.push('/signin')
-            //this.props.navigate('/signin');
-            //this.props.navigate('/signin');
-            //redirect('/singin')
-            //nav()
-            const { navigate } = this.props;
-            // Navigate to Another Component
             navigate("/singin");
           } else if (res.status === 400) {
             displayInfo(`${message}`)
@@ -109,4 +104,4 @@ class Register extends Component {
   }
 }
 
-export default withRouter(Register);
+export default navWrap(Register);
