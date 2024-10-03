@@ -56,7 +56,7 @@ class SignUp extends Component {
           const { navigate } = this.props;
           if (res.status === 201) {
             displaySuccess("Account created")
-            navigate("/singin");
+            navigate("/signin");
           } else if (res.status === 400) {
             displayInfo(`${message}`)
           }

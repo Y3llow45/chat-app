@@ -5,8 +5,8 @@ import { signIn } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
 import { displayError, displaySuccess } from '../Notify/Notify';
 import navWrap from '../Form/NavWrap/NavWrap';
-import { useUsernameAuth } from '../../contexts/UsernameContext';
-import { useRoleAuth } from '../../contexts/RoleContext';
+import { withUsernameAuth } from '../../contexts/UsernameContext';
+import { withRoleAuth } from '../../contexts/RoleContext';
 
 class SignIn extends Component {
   constructor(props) {
@@ -27,12 +27,10 @@ class SignIn extends Component {
   handleSign = async (event) => {
     event.preventDefault();
     const { username, password } = this.state;
-    const { setUsername } = this.props;
-    const { setUserRole } = this.props;
-    const { navigate } = this.props;
+    const { setUsername, setUserRole, navigate } = this.props;
 
     try {
-      const res = await signIn(username, password, setUsername);
+      const res = await signIn(username, password);
       const data = await res.json();
 
       if (res.status !== 200) {
@@ -84,4 +82,4 @@ class SignIn extends Component {
   }
 }
 
-export default navWrap(useUsernameAuth(useRoleAuth(SignIn)));
+export default navWrap(withUsernameAuth(withRoleAuth(SignIn)));

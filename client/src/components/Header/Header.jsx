@@ -24,8 +24,8 @@ const Header = () => {
       <nav className="nav-links">
         <NavLink to="/chats" className="nav-link">Chats</NavLink>
         <a href="https://github.com/Y3llow45/chat-app" target="_blank" rel="noopener noreferrer" className="nav-link">GitHub</a>
-        <NavLink to="/register" className="nav-link">Register</NavLink>
-        <NavLink to="/login" className="nav-link">Login</NavLink>
+        <NavLink to="/signUp" className="nav-link">SignUp</NavLink>
+        <NavLink to="/signIn" className="nav-link">SignIn</NavLink>
       </nav>
 
       <div className="profile-container" onClick={toggleDropdown}>
