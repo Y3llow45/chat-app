@@ -21,23 +21,17 @@ mongoose.connect(AtlasUri).then(() => {
 })
 
 app.post('/signup', async (req, res) => {
-  console.log('here at singup')
   try {
-    let { username, password } = req.body;
+    let { username, email, password } = req.body;
     const testUsername = await User.find({ username: username })
-    console.log('find')
     if (testUsername.length > 0) {
-      console.log(testUsername)
       return res.status(400).json({ message: 'Username already exists' });
     }
-    console.log('continnuing')
     bcrypt
       .hash(password, saltRounds)
       .then(hash => {
-        let newUser = new User({ username: username, password: hash, role: 'user' })
-        console.log('before saving')
+        let newUser = new User({ username: username, email: email, password: hash, role: 'user' })
         newUser.save();
-        console.log('saved')
       })
       .catch((err) => { throw err })
   }
@@ -49,27 +43,21 @@ app.post('/signup', async (req, res) => {
   res.status(201).json({ message: 'Account created' });
 })
 
-app.post('/login', async (req, res) => {
+app.post('/signin', async (req, res) => {
   const { username, password } = req.body;
+  console.log(`/signin, data: ${username} and ${password}`)
   try {
-    const user = await User.find({ username: username });
+    const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    bcrypt
-      .hash(user.password, saltRounds)
-      .then(hash => {
-        user.password = hash;
-      })
-      .catch((err) => { throw err })
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       res.status(401).json({ error: 'Invalid credentials' });
       return;
     }
-    const token = generateToken(user._id, user.username);
+    const token = generateToken(user._id, user.username, user.role);
     res.status(200).json({ message: 'Sign in successful', token, username: user.username });
 
   } catch (error) {
