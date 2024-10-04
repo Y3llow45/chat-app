@@ -4,11 +4,14 @@ import { slide as Menu } from 'react-burger-menu';
 import './Header.css';
 import logo from '../../assets/logo.png';
 import userPic from '../../assets/user.jpg';
+import { withUsernameAuth } from '../../contexts/UsernameContext';
+import { withRoleAuth } from '../../contexts/RoleContext';
+import { displaySuccess } from '../Notify/Notify';
 
-const Header = () => {
+const Header = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const { setUsername, setUserRole } = props;
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -17,15 +20,15 @@ const Header = () => {
     localStorage.removeItem('username');
     setUsername('Guest');
     setUserRole('guest');
-    displaySuccess('Logged out')
-  }
+    displaySuccess('Logged out');
+  };
 
   return (
     <header className="header-container">
       <div className="logo">
-        <NavLink to="/" style={{ "display": "flex" }}>
+        <NavLink to="/" style={{ display: 'flex' }}>
           <img src={logo} alt="Logo" className="logo-img" />
-          <h2 className='logo-text'>Chato</h2>
+          <h2 className="logo-text">Chato</h2>
         </NavLink>
       </div>
 
@@ -59,8 +62,8 @@ const Header = () => {
         <NavLink to="/register" className="nav-link-hamburger" onClick={toggleMenu}>Register</NavLink>
         <NavLink to="/login" className="nav-link-hamburger" onClick={toggleMenu}>Login</NavLink>
       </Menu>
-    </header >
+    </header>
   );
 };
 
-export default Header;
+export default withUsernameAuth(withRoleAuth(Header));
