@@ -12,6 +12,14 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    setUsername('Guest');
+    setUserRole('guest');
+    displaySuccess('Logged out')
+  }
+
   return (
     <header className="header-container">
       <div className="logo">
@@ -33,6 +41,8 @@ const Header = () => {
         {isDropdownOpen && (
           <div className="dropdown-menu">
             <NavLink to="/settings" className="dropdown-link">Settings</NavLink>
+            <br />
+            <NavLink to="/signIn" className="dropdown-link" onClick={logout}>Log out</NavLink>
           </div>
         )}
       </div>
