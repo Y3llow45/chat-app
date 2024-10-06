@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { displayInfo } from '../Notify/Notify';
+import { displayInfo, displaySuccess } from '../Notify/Notify';
 import './Chats.css';
 
 const Chats = () => {
@@ -10,7 +10,7 @@ const Chats = () => {
     { id: 2, username: 'Friend2', pfp: 'pfp2.jpg' },
   ]);
   const [participants, setParticipants] = useState(['Me', 'Friend1']);
-  const [groupName, setGroupName] = useState(null);
+  const [selectedChat, setSelectedChat] = useState(null);
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
@@ -22,22 +22,27 @@ const Chats = () => {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.size <= 10 * 1024 * 1024) {
-      console.log('File sent:', file.name);
+      displaySuccess('File sent:', file.name);
     } else {
       displayInfo('File size must be less than 10MB');
     }
+  };
+
+  const selectChat = (friend) => {
+    setSelectedChat(friend);
+    setParticipants(['Me', friend.username]);
   };
 
   return (
     <div className="chats-container">
       <div className="friends-search-container">
         <div className="search-add-container">
-          <input type="text" placeholder="Search users..." />
-          <button>Add Friend</button>
+          <input type="text" placeholder="Search users..." className="search-input" />
+          <button className="add-friend-btn">Add</button>
         </div>
         <div className="friends-list-container">
           {friends.map((friend) => (
-            <div key={friend.id} className="friend-item">
+            <div key={friend.id} className="friend-item" onClick={() => selectChat(friend)}>
               <img src={friend.pfp} alt="Profile" className="friend-pfp" />
               <span>{friend.username}</span>
             </div>
@@ -67,9 +72,12 @@ const Chats = () => {
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            className='input-message'
             placeholder="Type a message..."
           />
-          <button onClick={handleSendMessage}>Send</button>
+          <button onClick={handleSendMessage} className="send-btn">
+            📨
+          </button>
         </div>
       </div>
 
@@ -77,7 +85,10 @@ const Chats = () => {
         <h4>Participants</h4>
         <ul>
           {participants.map((participant, index) => (
-            <li key={index}>{participant}</li>
+            <li key={index} className="participant-item">
+              <img src={selectedChat?.pfp || 'default-pfp.jpg'} alt="Profile" className="participant-pfp" />
+              {participant}
+            </li>
           ))}
         </ul>
       </div>
