@@ -39,13 +39,11 @@ app.post('/signup', async (req, res) => {
     res.statusMessage = `${error}`;
     return res.status(500).send();
   }
-  console.log('acc created')
   res.status(201).json({ message: 'Account created' });
 })
 
 app.post('/signin', async (req, res) => {
   const { username, password } = req.body;
-  console.log(`/signin, data: ${username} and ${password}`)
   try {
     const user = await User.findOne({ username: username });
     if (!user) {
@@ -61,7 +59,6 @@ app.post('/signin', async (req, res) => {
     res.status(200).json({ message: 'Sign in successful', token, username: user.username });
 
   } catch (error) {
-    console.error('Error during sign-in:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 })
@@ -73,7 +70,6 @@ app.get('/api/getUserRole', verifyToken, async (req, res) => {
     res.status(200).json({ role: user._doc.role });
   }
   catch (error) {
-    console.log(error);
     res.status(401).json({ message: 'server error' });
   }
 });
