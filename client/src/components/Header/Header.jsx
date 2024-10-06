@@ -11,7 +11,7 @@ import { displaySuccess } from '../Notify/Notify';
 const Header = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { setUsername, setUserRole } = props;
+  const { setUsername, setUserRole, username, userRole } = props;
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -38,6 +38,14 @@ const Header = (props) => {
         <NavLink to="/signUp" className="nav-link">SignUp</NavLink>
         <NavLink to="/signIn" className="nav-link">SignIn</NavLink>
       </nav>
+
+      <div className='nav-user'>
+        {username && username !== "Guest" ? (
+          <p className='nav-user-wellcome blue'>{username}</p>
+        ) : (
+          <p className='nav-user-wellcome'>Guest</p>
+        )}
+      </div>
 
       <div className="profile-container" onClick={toggleDropdown}>
         <img src={userPic} alt="User Profile" className="profile-pic" />

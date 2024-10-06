@@ -145,6 +145,20 @@
   height: auto;
 }
 
+/*nav user wellcome*/
+.nav-user-wellcome {
+  color: black;
+  font-size: 1rem;
+}
+
+.nav-user {
+  margin-right: 20px;
+}
+
+.blue {
+  color: darkblue;
+}
+
 @media (max-width: 768px) {
 
   .nav-links,
@@ -158,5 +172,11 @@
 
   .nav-link-hamburger {
     font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav-user {
+    display: none;
   }
 }
