@@ -11,6 +11,34 @@ const Chats = () => {
   ]);
   const [participants, setParticipants] = useState(['Me', 'Friend1']);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleSearchChange = async (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.length >= 4) {
+      const res = await searchUsers(query);
+      setSearchResults(res);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleSelectUser = (user) => {
+    setSelectedUser(user);
+  };
+
+  const handleAddFriend = () => {
+    if (selectedUser) {
+      setFriends([...friends, selectedUser]);
+      setSearchQuery('');
+      setSearchResults([]);
+      setSelectedUser(null);
+    }
+  };
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
@@ -37,8 +65,28 @@ const Chats = () => {
     <div className="chats-container">
       <div className="friends-search-container">
         <div className="search-add-container">
-          <input type="text" placeholder="Search users..." className="search-input" />
-          <button className="add-friend-btn">Add</button>
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="search-input"
+          />
+          {searchResults.length > 0 && (
+            <div className="search-dropdown">
+              {searchResults.map((user) => (
+                <div
+                  key={user.id}
+                  className="search-result-item"
+                  onClick={() => handleSelectUser(user)}
+                >
+                  <img src={user.pfp} alt="Profile" className="search-pfp" />
+                  <span>{user.username}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <button className="add-friend-btn" onClick={handleAddFriend} disabled={!selectedUser}>Add</button>
         </div>
         <div className="friends-list-container">
           {friends.map((friend) => (
