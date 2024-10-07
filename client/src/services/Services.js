@@ -14,6 +14,19 @@ export const getRole = () => {
     );
 }
 
+export const searchUsers = (username) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+  return fetch(`${url}searchUsers/${username}`, { headers: { 'Authorization': token } })
+    .then(res => res.json())
+    .then((data) => {
+      return data
+    })
+    .catch(
+      (error) => console.log(error)
+    );
+}
+
 export const signUp = (username, email, password) => {
   let user = {
     username,
