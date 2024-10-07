@@ -63,6 +63,24 @@ app.post('/signin', async (req, res) => {
   }
 })
 
+app.get('/searchUsers/:username', verifyToken, async (req, res) => {
+  try {
+    const username = req.params.username;
+
+    if (username.length < 4) {
+      return res.status(400).json({ message: 'Search query too short' });
+    }
+    const users = await User.find({
+      username: { $regex: `^${username}`, $options: 'i' }
+    }).select('username profilePic');
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.get('/api/getUserRole', verifyToken, async (req, res) => {
   try {
     const username = req.username;
