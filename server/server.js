@@ -63,6 +63,12 @@ app.post('/signin', async (req, res) => {
   }
 })
 
+app.post('/update-pfp', verifyToken, async (req, res) => {
+  const { userId, newPfp } = req.body;
+  await User.findByIdAndUpdate(userId, { profilePic: newPfp });
+  res.json({ message: 'PFP updated' });
+});
+
 app.get('/searchUsers/:username', verifyToken, async (req, res) => {
   try {
     const username = req.params.username;

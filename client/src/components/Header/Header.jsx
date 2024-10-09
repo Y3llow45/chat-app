@@ -3,7 +3,10 @@ import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
 import './Header.css';
 import logo from '../../assets/logo.png';
-import userPic from '../../assets/user.jpg';
+import pic1 from '../../assets/1.png';
+import pic2 from '../../assets/2.png';
+import pic3 from '../../assets/3.png';
+import pic4 from '../../assets/4.png';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { withRoleAuth } from '../../contexts/RoleContext';
 import { displaySuccess } from '../Notify/Notify';
@@ -48,7 +51,8 @@ const Header = (props) => {
       </div>
 
       <div className="profile-container" onClick={toggleDropdown}>
-        <img src={userPic} alt="User Profile" className="profile-pic" />
+        <img src={`pic${profilePicIndex}`} alt="User Profile" className="profile-pic" />
+
         {isDropdownOpen && (
           <div className="dropdown-menu">
             <NavLink to="/settings" className="dropdown-link">Settings</NavLink>

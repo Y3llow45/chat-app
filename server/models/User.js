@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-import genRandomPfp from '../services/genRandomPfp'
+const genRandomPfp = require('../services/genRandomPfp')
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
