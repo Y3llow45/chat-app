@@ -3,7 +3,7 @@
   grid-template-columns: 1fr 2fr 1fr;
   grid-gap: 10px;
   height: 84vh;
-  margin-top: 2.4rem;
+  margin-top: 1rem;
 }
 
 .friends-search-container {
@@ -16,6 +16,7 @@
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  padding-left: 25px;
   border-bottom: 1px solid #ccc;
 }
 
