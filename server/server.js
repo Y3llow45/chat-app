@@ -63,10 +63,17 @@ app.post('/signin', async (req, res) => {
   }
 })
 
-app.post('/update-pfp', verifyToken, async (req, res) => {
-  const { userId, newPfp } = req.body;
-  await User.findByIdAndUpdate(userId, { profilePic: newPfp });
-  res.json({ message: 'PFP updated' });
+app.post('/updatePfp/:n', verifyToken, async (req, res) => {
+  try {
+    const n = req.params.n;
+    const username = req.params.username;
+    var myuser = await User.findOne({ username: username })
+    myuser.profilePic = n;
+    await myuser.save()
+    res.json({ message: 'PFP updated' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 app.get('/searchUsers/:username', verifyToken, async (req, res) => {
@@ -76,6 +83,7 @@ app.get('/searchUsers/:username', verifyToken, async (req, res) => {
     if (username.length < 4) {
       return res.status(400).json({ message: 'Search query too short' });
     }
+    //rewrite this
     const users = await User.find({
       username: { $regex: `^${username}`, $options: 'i' }
     }).select('username profilePic');
