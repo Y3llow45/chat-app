@@ -9,12 +9,13 @@ import pic3 from '../../assets/3.png';
 import pic4 from '../../assets/4.png';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { withRoleAuth } from '../../contexts/RoleContext';
+import { withPfpAuth } from '../../contexts/PfpContext';
 import { displaySuccess } from '../Notify/Notify';
 
 const Header = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { setUsername, setUserRole, username, userRole } = props;
+  const { setUsername, setUserRole, username, userRole, userPfp } = props;
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -51,7 +52,7 @@ const Header = (props) => {
       </div>
 
       <div className="profile-container" onClick={toggleDropdown}>
-        <img src={`pic${profilePicIndex}`} alt="User Profile" className="profile-pic" />
+        <img src={`pic${userPfp}`} alt="User Profile" className="profile-pic" />
 
         {isDropdownOpen && (
           <div className="dropdown-menu">
@@ -78,4 +79,4 @@ const Header = (props) => {
   );
 };
 
-export default withUsernameAuth(withRoleAuth(Header));
+export default withPfpAuth(withUsernameAuth(withRoleAuth(Header)));
