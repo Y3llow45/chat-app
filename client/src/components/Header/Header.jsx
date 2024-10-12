@@ -7,6 +7,7 @@ import pic1 from '../../assets/1.png';
 import pic2 from '../../assets/2.png';
 import pic3 from '../../assets/3.png';
 import pic4 from '../../assets/4.png';
+import userPic from '../../assets/user.jpg';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { withRoleAuth } from '../../contexts/RoleContext';
 import { withPfpAuth } from '../../contexts/PfpContext';
@@ -52,7 +53,9 @@ const Header = (props) => {
       </div>
 
       <div className="profile-container" onClick={toggleDropdown}>
-        <img src={`pic${userPfp}`} alt="User Profile" className="profile-pic" />
+        {userPfp == ''
+          ? <img src={userPic} alt="User Profile" className="profile-pic" />
+          : <img src={`pic${userPfp}`} alt="User Profile" className="profile-pic" />}
 
         {isDropdownOpen && (
           <div className="dropdown-menu">
