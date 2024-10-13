@@ -63,15 +63,19 @@ app.post('/signin', async (req, res) => {
   }
 })
 
-app.post('/updatePfp/:n', verifyToken, async (req, res) => {
+app.put('/updatePfp/:index', verifyToken, async (req, res) => {
   try {
-    const n = req.params.n;
-    const username = req.params.username;
-    var myuser = await User.findOne({ username: username })
-    myuser.profilePic = n;
-    await myuser.save()
-    res.json({ message: 'PFP updated' });
+    const index = req.params.index;
+    const username = req.username;
+    var user = await User.findOne({ username: username })
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.profilePic = index;
+    await user.save()
+    res.json({ message: 'Pfp updated' });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: 'Server error' });
   }
 });

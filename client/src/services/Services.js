@@ -1,6 +1,18 @@
 import { displayInfo } from '../components/Notify/Notify';
 const url = 'http://localhost:5242/';
 
+export const updatePfp = (index) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+  return fetch(`${url}updatePfp/${index}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token
+    }
+  })
+};
+
 export const getRole = () => {
   const token = localStorage.getItem('token');
   if (!token) return;
