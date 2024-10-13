@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { displayInfo, displaySuccess } from '../Notify/Notify';
+import { searchUsers } from '../../services/Services'
 import './Chats.css';
 
 const Chats = () => {

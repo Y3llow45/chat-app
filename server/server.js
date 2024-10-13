@@ -87,7 +87,6 @@ app.get('/searchUsers/:username', verifyToken, async (req, res) => {
     if (username.length < 4) {
       return res.status(400).json({ message: 'Search query too short' });
     }
-    //rewrite this
     const users = await User.find({
       username: { $regex: `^${username}`, $options: 'i' }
     }).select('username profilePic');
