@@ -1,3 +1,13 @@
+.settings-container {
+  height: 84vh;
+}
+
+.pfp-selection {
+  display: flex;
+  justify-content: center;
+}
+
+
 .pfp-item-container {
   width: 100px;
   height: 100px;

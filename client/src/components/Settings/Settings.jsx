@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { withPfpAuth } from '../../contexts/PfpContext';
-//import { save } from '../../services/Services';
+import { updatePfp } from '../../services/Services';
 import pfp1 from '../../assets/1.png';
 import pfp2 from '../../assets/2.png';
 import pfp3 from '../../assets/3.png';
@@ -9,6 +9,7 @@ import pfp4 from '../../assets/4.png';
 import userPic from '../../assets/user.jpg';
 import navWrap from '../Form/NavWrap/NavWrap';
 import './Settings.css';
+import { displaySuccess } from '../Notify/Notify';
 
 const imagePfps = [userPic, pfp1, pfp2, pfp3, pfp4]
 const availablePfps = [0, 1, 2, 3, 4];
@@ -23,7 +24,6 @@ class Settings extends Component {
   }
 
   handlePfpSelect = (pfp) => {
-    console.log(pfp)
     this.setState({ selectedPfp: pfp });
   };
 
@@ -32,7 +32,8 @@ class Settings extends Component {
     const { selectedPfp } = this.state;
     setUserPfp(selectedPfp);
     localStorage.setItem('userPfp', selectedPfp);
-    //save(selectedPfp);
+    displaySuccess("Pfp updated")
+    updatePfp(selectedPfp)
   };
 
   render() {
