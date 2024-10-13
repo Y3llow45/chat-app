@@ -1,4 +1,5 @@
 import './App.css'
+import 'react-toastify/dist/ReactToastify.css';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import Home from './components/Home/Home'
@@ -6,12 +7,12 @@ import Header from './components/Header/Header';
 import SignUp from './components/SignUp/SignUp';
 import SignIn from './components/SignIn/SignIn';
 import Chats from './components/Chats/Chats';
+import Settings from './components/Settings/Settings';
 import Footer from './components/Footer/Footer';
 import { UsernameProvider } from './contexts/UsernameContext';
 import { RoleProvider } from './contexts/RoleContext';
-
-import 'react-toastify/dist/ReactToastify.css';
 import { PfpProvider } from './contexts/PfpContext';
+
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path="/chats" element={<Chats />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signin" element={<SignIn />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
             <Footer />
           </div>
