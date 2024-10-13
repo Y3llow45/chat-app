@@ -1,11 +1,17 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { withPfpAuth } from '../../contexts/PfpContext';
-import { save } from '../../services/Services';
+//import { save } from '../../services/Services';
+import pfp1 from '../../assets/1.png';
+import pfp2 from '../../assets/2.png';
+import pfp3 from '../../assets/3.png';
+import pfp4 from '../../assets/4.png';
+import userPic from '../../assets/user.jpg';
 import navWrap from '../Form/NavWrap/NavWrap';
 import './Settings.css';
 
-const availablePfps = [1, 2, 3, 4];
+const imagePfps = [userPic, pfp1, pfp2, pfp3, pfp4]
+const availablePfps = [0, 1, 2, 3, 4];
 
 class Settings extends Component {
   constructor(props) {
@@ -17,6 +23,7 @@ class Settings extends Component {
   }
 
   handlePfpSelect = (pfp) => {
+    console.log(pfp)
     this.setState({ selectedPfp: pfp });
   };
 
@@ -24,7 +31,7 @@ class Settings extends Component {
     const { setUserPfp } = this.props;
     const { selectedPfp } = this.state;
     setUserPfp(selectedPfp);
-    save(selectedPfp);
+    //save(selectedPfp);
   };
 
   render() {
@@ -37,14 +44,12 @@ class Settings extends Component {
 
         <h3>Select your profile picture</h3>
         <div className="pfp-selection">
-          {availablePfps.map((pfp) => (
-            <img
-              key={pfp}
-              src={`pic${pfp}.jpg`}
-              alt={`Profile ${pfp}`}
-              className={`pfp-item ${selectedPfp === pfp ? 'selected' : ''}`}
-              onClick={() => this.handlePfpSelect(pfp)}
-            />
+          {imagePfps.map((pfp, index) => (
+            <div key={pfp}
+              className={`pfp-item-container ${selectedPfp === index ? 'selected' : ''}`}
+              onClick={() => this.handlePfpSelect(index)}>
+              <img key={index} src={pfp} alt="pfp" className="pfp-item" />
+            </div>
           ))}
         </div>
 

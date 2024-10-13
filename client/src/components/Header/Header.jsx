@@ -3,15 +3,17 @@ import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
 import './Header.css';
 import logo from '../../assets/logo.png';
-import pic1 from '../../assets/1.png';
-import pic2 from '../../assets/2.png';
-import pic3 from '../../assets/3.png';
-import pic4 from '../../assets/4.png';
+import pfp1 from '../../assets/1.png';
+import pfp2 from '../../assets/2.png';
+import pfp3 from '../../assets/3.png';
+import pfp4 from '../../assets/4.png';
 import userPic from '../../assets/user.jpg';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { withRoleAuth } from '../../contexts/RoleContext';
 import { withPfpAuth } from '../../contexts/PfpContext';
 import { displaySuccess } from '../Notify/Notify';
+
+const images = [userPic, pfp1, pfp2, pfp3, pfp4];
 
 const Header = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,9 +55,11 @@ const Header = (props) => {
       </div>
 
       <div className="profile-container" onClick={toggleDropdown}>
-        {userPfp == ''
-          ? <img src={userPic} alt="User Profile" className="profile-pic" />
-          : <img src={`pic${userPfp}`} alt="User Profile" className="profile-pic" />}
+        {console.log("userPfp" + userPfp)}
+        {userPfp !== undefined ?
+          <img src={images[userPfp]} alt="User Profile" className="profile-pic" /> :
+          <img src={userPic} alt="User Profile" className="profile-pic" />
+        }
 
         {isDropdownOpen && (
           <div className="dropdown-menu">
