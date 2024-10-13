@@ -31,6 +31,7 @@ class Settings extends Component {
     const { setUserPfp } = this.props;
     const { selectedPfp } = this.state;
     setUserPfp(selectedPfp);
+    localStorage.setItem('userPfp', selectedPfp);
     //save(selectedPfp);
   };
 

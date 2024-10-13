@@ -56,7 +56,7 @@ const Header = (props) => {
 
       <div className="profile-container" onClick={toggleDropdown}>
         {console.log("userPfp" + userPfp)}
-        {userPfp !== undefined ?
+        {(userPfp !== undefined && userPfp !== null) ?
           <img src={images[userPfp]} alt="User Profile" className="profile-pic" /> :
           <img src={userPic} alt="User Profile" className="profile-pic" />
         }

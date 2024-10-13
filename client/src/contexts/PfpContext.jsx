@@ -3,7 +3,8 @@ import { createContext, useContext, useState } from 'react';
 const PfpContext = createContext();
 
 export const PfpProvider = ({ children }) => {
-  const [userPfp, setUserPfp] = useState(null);
+  const savedPfp = localStorage.getItem('userPfp');
+  const [userPfp, setUserPfp] = useState(savedPfp !== null ? parseInt(savedPfp) : 0);
   return (
     <PfpContext.Provider value={{ userPfp, setUserPfp }}>
       {children}
