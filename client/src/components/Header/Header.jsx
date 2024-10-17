@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import './Header.css';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
-import './Header.css';
 import logo from '../../assets/logo.png';
-import pfp1 from '../../assets/1.png';
-import pfp2 from '../../assets/2.png';
-import pfp3 from '../../assets/3.png';
-import pfp4 from '../../assets/4.png';
-import userPic from '../../assets/user.jpg';
-import { withUsernameAuth } from '../../contexts/UsernameContext';
-import { withRoleAuth } from '../../contexts/RoleContext';
-import { withPfpAuth } from '../../contexts/PfpContext';
-import { displaySuccess } from '../Notify/Notify';
+import userPic from '../../assets/user.jpg';  //default
+import pfp1 from '../../assets/1.png';  // avatar
+import pfp2 from '../../assets/2.png';  // avatar
+import pfp3 from '../../assets/3.png';  // avatar
+import pfp4 from '../../assets/4.png';  // avatar
+import { withUsernameAuth } from '../../contexts/UsernameContext';  // context
+import { withRoleAuth } from '../../contexts/RoleContext';  // context
+import { withPfpAuth } from '../../contexts/PfpContext';  // context
+import { displaySuccess } from '../Notify/Notify';  // notifications
 
 const images = [userPic, pfp1, pfp2, pfp3, pfp4];
 
@@ -55,7 +55,6 @@ const Header = (props) => {
       </div>
 
       <div className="profile-container" onClick={toggleDropdown}>
-        {console.log("userPfp" + userPfp)}
         {(userPfp !== undefined && userPfp !== null) ?
           <img src={images[userPfp]} alt="User Profile" className="profile-pic" /> :
           <img src={userPic} alt="User Profile" className="profile-pic" />
