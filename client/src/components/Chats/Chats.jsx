@@ -1,7 +1,12 @@
+import './Chats.css';
 import { useState } from 'react';
 import { displayInfo, displaySuccess } from '../Notify/Notify';
 import { searchUsers } from '../../services/Services'
-import './Chats.css';
+import userPic from '../../assets/user.jpg';  //default
+import pfp1 from '../../assets/1.png';  // avatar
+import pfp2 from '../../assets/2.png';  // avatar
+import pfp3 from '../../assets/3.png';  // avatar
+import pfp4 from '../../assets/4.png';  // avatar
 
 const Chats = () => {
   const [message, setMessage] = useState('');
@@ -16,6 +21,9 @@ const Chats = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const MAX_FILE_SIZE_BYTES = 10000000;
+  const images = [userPic, pfp1, pfp2, pfp3, pfp4];
+
   const handleSearchChange = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -29,6 +37,7 @@ const Chats = () => {
   };
 
   const handleSelectUser = (user) => {
+    console.log(user)
     setSelectedUser(user);
   };
 
@@ -50,7 +59,7 @@ const Chats = () => {
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    if (file && file.size <= 10 * 1024 * 1024) {
+    if (file && file.size <= MAX_FILE_SIZE_BYTES) {
       displaySuccess('File sent:', file.name);
     } else {
       displayInfo('File size must be less than 10MB');
@@ -77,17 +86,17 @@ const Chats = () => {
             <div className="search-dropdown">
               {searchResults.map((user) => (
                 <div
-                  key={user.id}
+                  key={user._id}
                   className="search-result-item"
                   onClick={() => handleSelectUser(user)}
                 >
-                  <img src={user.pfp} alt="Profile" className="search-pfp" />
+                  <img src={images[user.profilePic]} alt="Profile" className="search-pfp" />
                   <span>{user.username}</span>
+                  <button className="add-friend-btn" onClick={handleAddFriend} disabled={!selectedUser}>Add</button>
                 </div>
               ))}
             </div>
           )}
-          <button className="add-friend-btn" onClick={handleAddFriend} disabled={!selectedUser}>Add</button>
         </div>
         <div className="friends-list-container">
           {friends.map((friend) => (
@@ -141,7 +150,7 @@ const Chats = () => {
           ))}
         </ul>
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -23,8 +23,9 @@
 }
 
 .search-input {
-  width: 70%;
+  width: 100%;
   padding: 5px;
+  height: 1.8rem;
 }
 
 .add-friend-btn {
@@ -149,14 +150,11 @@
 
 .search-dropdown {
   position: absolute;
-  top: 40px;
-  /* Adjust based on your input field */
-  left: 0;
+  top: 53px;
   background-color: white;
   border: 1px solid #ccc;
   z-index: 10;
-  /* Ensures it's on top of other content */
-  width: 100%;
+  width: 90.3%;
   max-height: 200px;
   overflow-y: auto;
 }
@@ -170,7 +168,7 @@
 }
 
 .search-result-item:hover {
-  background-color: #f1f1f1;
+  background-color: #bbbbbb;
 }
 
 .search-pfp {
@@ -181,5 +179,6 @@
 }
 
 .add-friend-btn {
-  margin-top: 10px;
+  margin-right: 0px;
+  margin-left: auto;
 }
