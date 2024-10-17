@@ -19,7 +19,6 @@ const Chats = () => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
 
   const MAX_FILE_SIZE_BYTES = 10000000;
   const images = [userPic, pfp1, pfp2, pfp3, pfp4];
@@ -36,18 +35,11 @@ const Chats = () => {
     }
   };
 
-  const handleSelectUser = (user) => {
-    console.log(user)
-    setSelectedUser(user);
-  };
-
   const handleAddFriend = () => {
-    if (selectedUser) {
-      setFriends([...friends, selectedUser]);
-      setSearchQuery('');
-      setSearchResults([]);
-      setSelectedUser(null);
-    }
+    //setFriends([...friends, selectedUser]);
+    setSearchQuery('');
+    setSearchResults([]);
+    //sendFriendRequest()
   };
 
   const handleSendMessage = () => {
@@ -92,7 +84,7 @@ const Chats = () => {
                 >
                   <img src={images[user.profilePic]} alt="Profile" className="search-pfp" />
                   <span>{user.username}</span>
-                  <button className="add-friend-btn" onClick={handleAddFriend} disabled={!selectedUser}>Add</button>
+                  <button className="add-friend-btn" onClick={() => handleAddFriend(user.username)}>Add</button>
                 </div>
               ))}
             </div>
