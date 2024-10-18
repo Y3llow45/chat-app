@@ -98,6 +98,31 @@ app.get('/searchUsers/:username', verifyToken, async (req, res) => {
   }
 });
 
+app.post('/friendRequest', verifyToken, async (req, res) => {
+  const { friendUsername } = req.body;
+  const requesterUsername = req.username;
+
+  try {
+    const friend = await User.findOne({ username: friendUsername });
+    const requester = await User.findOne({ username: requesterUsername });
+
+    if (!friend || !requester) return res.status(404).json({ message: 'User not found' });
+
+    if (friend.friends.includes(requesterUsername) || friend.pendingRequests.includes(requesterUsername)) {
+      return res.status(400).json({ message: 'Already friends or request pending' });
+    }
+
+    friend.pendingRequests.push(requesterUsername);
+    await friend.save();
+
+    res.json({ message: 'Friend request sent' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
 app.get('/api/getUserRole', verifyToken, async (req, res) => {
   try {
     const username = req.username;
