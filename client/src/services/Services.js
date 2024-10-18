@@ -55,7 +55,21 @@ export const sendFriendRequest = (friendUsername) => {
     .catch(error => console.log(error));
 };
 
+export const acceptFriendRequest = (requesterUsername) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
 
+  return fetch(`${url}/acceptFriendRequest`, {
+    method: 'POST',
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ requesterUsername }),
+  })
+    .then(res => res.json())
+    .catch(error => console.log(error));
+};
 
 export const signUp = (username, email, password) => {
   let user = {
