@@ -39,6 +39,24 @@ export const searchUsers = (username) => {
     );
 }
 
+export const sendFriendRequest = (friendUsername) => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  return fetch(`${url}/friendRequest`, {
+    method: 'POST',
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ friendUsername }),
+  })
+    .then(res => res.json())
+    .catch(error => console.log(error));
+};
+
+
+
 export const signUp = (username, email, password) => {
   let user = {
     username,
