@@ -1,12 +1,13 @@
 import './Chats.css';
 import { useState } from 'react';
-import { displayInfo, displaySuccess } from '../Notify/Notify';
+import { displayError, displayInfo, displaySuccess } from '../Notify/Notify';
 import { searchUsers } from '../../services/Services'
 import userPic from '../../assets/user.jpg';  //default
 import pfp1 from '../../assets/1.png';  // avatar
 import pfp2 from '../../assets/2.png';  // avatar
 import pfp3 from '../../assets/3.png';  // avatar
 import pfp4 from '../../assets/4.png';  // avatar
+import sendFriendRequest from '../../services/Services';
 
 const Chats = () => {
   const [message, setMessage] = useState('');
@@ -35,12 +36,19 @@ const Chats = () => {
     }
   };
 
-  const handleAddFriend = () => {
-    //setFriends([...friends, selectedUser]);
-    setSearchQuery('');
-    setSearchResults([]);
-    //sendFriendRequest()
+  const handleAddFriend = (username) => {
+    sendFriendRequest(username).then((response) => {
+      if (response.message === 'Friend request sent') {
+        setSearchQuery('');
+        setSearchResults([]);
+        setSelectedUser(null);
+        displaySuccess('Friend request sent')
+      } else {
+        displayError('User not found or server error')
+      }
+    });
   };
+
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
