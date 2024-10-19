@@ -1,6 +1,6 @@
 @font-face {
   font-family: SofaChrome;
-  src: url('../../fonts/sofachrome.otf');
+  src: url("../../fonts/sofachrome.otf");
 }
 
 .header-container {
@@ -8,7 +8,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #ffffff;
+  background-color: #fff;
   color: white;
   position: sticky;
   top: 0;
@@ -26,7 +26,7 @@
   margin-left: 1rem;
   margin-top: 10px;
   margin-bottom: 10px;
-  font-family: SofaChrome;
+  font-family: SofaChrome, sans-serif;
 }
 
 .logo-img {
@@ -42,14 +42,14 @@
 }
 
 .nav-link {
-  color: rgb(0, 0, 0);
+  color: rgb(0 0 0);
   text-decoration: none;
   font-size: 1.4rem;
 }
 
 .nav-link:hover {
   text-decoration: none;
-  color: rgb(39, 148, 226);
+  color: rgb(39 148 226);
 }
 
 .profile-container {
@@ -68,7 +68,7 @@
 .dropdown-menu {
   position: absolute;
   top: 56px;
-  right: 0px;
+  right: 0;
   background-color: #484848;
   padding: 10px;
   border-radius: 5px;
@@ -81,17 +81,18 @@
 }
 
 .dropdown-link:hover {
-  color: rgb(39, 148, 226);
+  color: rgb(39 148 226);
 }
 
 .bm-burger-button {
   position: relative;
   width: 36px;
   height: 30px;
+  display: none;
 }
 
 .bm-burger-bars {
-  background: rgb(0, 0, 0);
+  background: rgb(0 0 0);
 }
 
 .bm-cross-button {
@@ -107,10 +108,6 @@
   background: #373a47;
   padding: 2.5em 1.5em 0;
   font-size: 1.15em;
-}
-
-.bm-burger-button {
-  display: none;
 }
 
 .bm-morph-shape {
@@ -129,7 +126,7 @@
 }
 
 .bm-overlay {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0 0 0 / 30%);
 }
 
 .nav-link-hamburger {
@@ -146,7 +143,6 @@
   height: auto;
 }
 
-/*nav user wellcome*/
 .nav-user-wellcome {
   color: black;
   font-size: 1rem;
@@ -161,7 +157,6 @@
 }
 
 @media (max-width: 768px) {
-
   .nav-links,
   .profile-container {
     display: none;

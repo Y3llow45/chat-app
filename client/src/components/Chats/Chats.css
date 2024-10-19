@@ -32,6 +32,8 @@
   width: 20%;
   padding: 5px;
   background-color: #363636;
+  margin-right: 0;
+  margin-left: auto;
 }
 
 .friends-list-container {
@@ -120,7 +122,6 @@
   font-size: 1.5em;
 }
 
-/*third row*/
 .participants-container {
   padding: 10px;
   border-left: 1px solid #ccc;
@@ -164,7 +165,7 @@
 }
 
 .search-result-item:hover {
-  background-color: #bbbbbb;
+  background-color: #bbb;
 }
 
 .search-pfp {
@@ -172,9 +173,4 @@
   height: 30px;
   border-radius: 50%;
   margin-right: 10px;
-}
-
-.add-friend-btn {
-  margin-right: 0px;
-  margin-left: auto;
 }
