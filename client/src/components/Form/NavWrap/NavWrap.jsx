@@ -1,14 +1,14 @@
-import { useNavigate, } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 const navWrap = WrappedComponent => props => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <WrappedComponent
       {...props}
       {...{ navigate }}
     />
-  );
-};
+  )
+}
 
-export default navWrap;
+export default navWrap

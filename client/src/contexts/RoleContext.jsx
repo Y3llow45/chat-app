@@ -1,29 +1,29 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react'
 
-const RoleContext = createContext();
+const RoleContext = createContext()
 
 export const RoleProvider = ({ children }) => {
-  const [userRole, setUserRole] = useState(null);
+  const [userRole, setUserRole] = useState(null)
   return (
     <RoleContext.Provider value={{ userRole, setUserRole }}>
       {children}
     </RoleContext.Provider>
-  );
-};
+  )
+}
 
 export const useRoleAuth = () => {
-  return useContext(RoleContext);
-};
+  return useContext(RoleContext)
+}
 
-export function withRoleAuth(Component) {
-  return function RoleAuthWrapper(props) {
-    const { setUserRole, userRole } = useRoleAuth();
+export function withRoleAuth (Component) {
+  return function RoleAuthWrapper (props) {
+    const { setUserRole, userRole } = useRoleAuth()
     return (
       <Component
         {...props}
         setUserRole={setUserRole}
         userRole={userRole}
       />
-    );
-  };
+    )
+  }
 }

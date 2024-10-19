@@ -18,7 +18,7 @@
 
 .form-tittle {
   font-size: 1.5rem;
-  font-family: "Poppins", sans-serif;
+  font-family: Poppins, sans-serif;
   font-weight: bold;
   color: black;
 }
@@ -36,7 +36,7 @@
   border: 1px solid #575757;
   border-radius: 6px;
   font-size: 0.9rem;
-  font-family: "Poppins", sans-serif;
+  font-family: Poppins, sans-serif;
   transition: border-color 0.3s ease-in-out;
 }
 
@@ -55,7 +55,7 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
-  font-family: "Poppins", sans-serif;
+  font-family: Poppins, sans-serif;
   font-weight: bold;
 }
 
