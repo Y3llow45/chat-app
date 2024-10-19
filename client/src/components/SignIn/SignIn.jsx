@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import './SignIn.css';
 import { signIn } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
 import { displayError, displaySuccess } from '../Notify/Notify';
