@@ -7,7 +7,7 @@ import pfp1 from '../../assets/1.png';  // avatar
 import pfp2 from '../../assets/2.png';  // avatar
 import pfp3 from '../../assets/3.png';  // avatar
 import pfp4 from '../../assets/4.png';  // avatar
-import sendFriendRequest from '../../services/Services';
+import { sendFriendRequest } from '../../services/Services';
 
 const Chats = () => {
   const [message, setMessage] = useState('');

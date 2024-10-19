@@ -1,7 +1,7 @@
 import { displayInfo } from '../components/Notify/Notify';
 const url = 'http://localhost:5242/';
 
-export const updatePfp = (index) => {
+export const updatePfp = (index: number) => {
   const token = localStorage.getItem('token');
   if (!token) return;
   return fetch(`${url}updatePfp/${index}`, {
@@ -26,7 +26,7 @@ export const getRole = () => {
     );
 }
 
-export const searchUsers = (username) => {
+export const searchUsers = (username: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
   return fetch(`${url}searchUsers/${username}`, { headers: { 'Authorization': token } })
@@ -39,7 +39,7 @@ export const searchUsers = (username) => {
     );
 }
 
-export const sendFriendRequest = (friendUsername) => {
+export const sendFriendRequest = (friendUsername: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -55,7 +55,7 @@ export const sendFriendRequest = (friendUsername) => {
     .catch(error => console.log(error));
 };
 
-export const acceptFriendRequest = (requesterUsername) => {
+export const acceptFriendRequest = (requesterUsername: string) => {
   const token = localStorage.getItem('token');
   if (!token) return;
 
@@ -71,7 +71,7 @@ export const acceptFriendRequest = (requesterUsername) => {
     .catch(error => console.log(error));
 };
 
-export const signUp = (username, email, password) => {
+export const signUp = (username: string, email: string, password: string) => {
   let user = {
     username,
     email,
@@ -87,7 +87,7 @@ export const signUp = (username, email, password) => {
   });
 };
 
-export const signIn = (username, password) => {
+export const signIn = (username: string, password: string) => {
   let user = {
     username,
     password,
@@ -102,7 +102,7 @@ export const signIn = (username, password) => {
   })
 };
 
-export const checkDuplicate = (type, username) => {
+export const checkDuplicate = (type: string, username: string) => {
   return fetch(`${url}check/${type}/${username}`, {
     method: 'GET',
     headers: {

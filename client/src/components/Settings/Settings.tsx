@@ -14,8 +14,18 @@ import { displaySuccess } from '../Notify/Notify';
 const imagePfps = [userPic, pfp1, pfp2, pfp3, pfp4]
 const availablePfps = [0, 1, 2, 3, 4];
 
-class Settings extends Component {
-  constructor(props) {
+interface SettingsProps {
+  username: string;
+  userPfp: number;
+  setUserPfp: (pfp: number) => void;
+}
+
+interface SettingsState {
+  selectedPfp: number;
+}
+
+class Settings extends Component<SettingsProps, SettingsState> {
+  constructor(props: SettingsProps) {
     super(props);
 
     this.state = {
@@ -23,7 +33,7 @@ class Settings extends Component {
     };
   }
 
-  handlePfpSelect = (pfp) => {
+  handlePfpSelect = (pfp: number) => {
     this.setState({ selectedPfp: pfp });
   };
 
@@ -31,7 +41,7 @@ class Settings extends Component {
     const { setUserPfp } = this.props;
     const { selectedPfp } = this.state;
     setUserPfp(selectedPfp);
-    localStorage.setItem('userPfp', selectedPfp);
+    localStorage.setItem('userPfp', selectedPfp.toString());
     displaySuccess("Pfp updated")
     updatePfp(selectedPfp)
   };

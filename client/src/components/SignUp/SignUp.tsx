@@ -9,9 +9,18 @@ import navWrap from '../Form/NavWrap/NavWrap';
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/;
 
+interface SignUpState {
+  username: string;
+  email: string;
+  password: string;
+}
 
-class SignUp extends Component {
-  constructor(props) {
+interface SignUpProps {
+  navigate: (path: string) => void;
+}
+
+class SignUp extends Component<SignUpProps, SignUpState> {
+  constructor(props: SignUpProps) {
     super(props);
 
     this.state = {
@@ -22,16 +31,16 @@ class SignUp extends Component {
   }
 
   componentDidMount() {
-    document.getElementById("email").addEventListener("blur", this.checkEmail);
-    document.getElementById("username").addEventListener("blur", this.checkUsername);
+    document.getElementById("email")?.addEventListener("blur", this.checkEmail);
+    document.getElementById("username")?.addEventListener("blur", this.checkUsername);
   }
 
   componentWillUnmount() {
-    document.getElementById("email").removeEventListener("blur", this.checkEmail);
-    document.getElementById("username").removeEventListener("blur", this.checkUsername);
+    document.getElementById("email")?.removeEventListener("blur", this.checkEmail);
+    document.getElementById("username")?.removeEventListener("blur", this.checkUsername);
   }
 
-  handleInputChange = (event) => {
+  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleInputChangeComponent(event, this.setState.bind(this));
   }
 
@@ -43,7 +52,7 @@ class SignUp extends Component {
     await checkDuplicate('Username', this.state.username);
   }
 
-  handleSignUp = async (event) => {
+  handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
       event.preventDefault();
       if (!passwordPattern.test(this.state.password)) {

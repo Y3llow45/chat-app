@@ -149,7 +149,7 @@
   top: 53px;
   background-color: white;
   border: 1px solid #ccc;
-  z-index: 10;
+  z-index: 2;
   width: 90.3%;
   max-height: 200px;
   overflow-y: auto;

@@ -1,4 +1,11 @@
-const FormComponent = ({ username, password, handleInputChange }) => {
+interface FormComponentProps {
+  username: string;
+  password: string;
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  checkFunc?: () => Promise<void>;
+}
+
+const FormComponent: React.FC<FormComponentProps> = ({ username, password, handleInputChange }) => {
   return (
     <>
       <input

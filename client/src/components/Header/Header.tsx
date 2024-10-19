@@ -15,7 +15,15 @@ import { displaySuccess } from '../Notify/Notify';  // notifications
 
 const images = [userPic, pfp1, pfp2, pfp3, pfp4];
 
-const Header = (props) => {
+interface HeaderProps {
+  setUsername: (username: string) => void;
+  setUserRole: (role: string) => void;
+  username: string;
+  userRole: string;
+  userPfp: number | null;
+}
+
+const Header: React.FC<HeaderProps> = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { setUsername, setUserRole, username, userRole, userPfp } = props;

@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "ES2020", /* Set modern JavaScript language version for emitted JavaScript. */
+    "target": "ES2020",
     "lib": [
       "DOM",
       "ES2020"
-    ], /* Include DOM library for browser compatibility. */
-    "jsx": "react-jsx", /* Use the new JSX runtime in React 17+. */
-    "module": "commonjs", /* Use CommonJS for Node compatibility. */
-    /* Modules */
-    "moduleResolution": "node", /* Use Node.js resolution logic. */
-    "baseUrl": "./src", /* Base directory for non-relative imports. */
-    "paths": { /* Optional aliasing for import paths. */
+    ],
+    "jsx": "react-jsx",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
       "@components/*": [
         "components/*"
       ],
@@ -19,24 +17,21 @@
         "services/*"
       ]
     },
-    /* Type Checking */
-    "strict": true, /* Enable all strict type-checking options. */
-    "noImplicitAny": true, /* Enable error reporting for implicit 'any' types. */
-    "strictNullChecks": true, /* Enforce checking for `null` and `undefined`. */
-    /* JavaScript Support */
-    "allowJs": true, /* Allow JS files to be part of the project (if needed). */
-    "checkJs": false, /* Disable type-checking for JS files. */
-    /* Interop Constraints */
-    "esModuleInterop": true, /* Emit extra code for CommonJS module compatibility. */
-    "forceConsistentCasingInFileNames": true, /* Ensure casing consistency in imports. */
-    /* Emit */
-    "skipLibCheck": true, /* Skip type checking all .d.ts files for better performance. */
-    "sourceMap": true /* Enable source maps for easier debugging. */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true
   },
   "include": [
-    "src"
-  ], /* Include the source files for the project. */
+    "src",
+    "declarations.d.ts"
+  ],
   "exclude": [
     "node_modules"
-  ] /* Exclude node_modules for faster compilation. */
+  ]
 }
