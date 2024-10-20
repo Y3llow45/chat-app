@@ -16,7 +16,7 @@ export default [
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
         sourceType: 'module',
-        project: './tsconfig.json',
+        project: ['./tsconfig.json']
       }
     },
     settings: { react: { version: '18.3' } },
@@ -24,7 +24,7 @@ export default [
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      '@typescript-eslint': typescriptEslintPlugin,
+      '@typescript-eslint': typescriptEslintPlugin
     },
     rules: {
       'constructor-super': 'off',

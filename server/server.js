@@ -101,8 +101,8 @@ app.post('/friendRequest', verifyToken, async (req, res) => {
   const { friendUsername } = req.body
   const requesterUsername = req.username
 
-  const { friend, error, status } = await findUsers(friendUsername, requesterUsername);
-  if (error) return res.status(status).json({ message: error });
+  const { friend, error, status } = await findUsers(friendUsername, requesterUsername)
+  if (error) return res.status(status).json({ message: error })
 
   if (friend.friends.includes(requesterUsername) || friend.pendingRequests.includes(requesterUsername)) {
     return res.status(400).json({ message: 'Already friends or request pending' })
