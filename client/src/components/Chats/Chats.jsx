@@ -88,7 +88,6 @@ const Chats = () => {
                 <div
                   key={user._id}
                   className='search-result-item'
-                  onClick={() => handleSelectUser(user)}
                 >
                   <img src={images[user.profilePic]} alt='Profile' className='search-pfp' />
                   <span>{user.username}</span>
