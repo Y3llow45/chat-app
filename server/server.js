@@ -7,6 +7,7 @@ const generateToken = require('./services/genToken')
 const bodyParser = require('body-parser')
 const User = require('./models/User')
 const verifyToken = require('./middleware/verifyToken')
+const findUsers = require('./services/findUsers')
 
 const app = express()
 const PORT = parseInt(process.env.PORT, 10)
@@ -100,46 +101,34 @@ app.post('/friendRequest', verifyToken, async (req, res) => {
   const { friendUsername } = req.body
   const requesterUsername = req.username
 
-  try {
-    const friend = await User.findOne({ username: friendUsername })
-    const requester = await User.findOne({ username: requesterUsername })
+  const { friend, error, status } = await findUsers(friendUsername, requesterUsername);
+  if (error) return res.status(status).json({ message: error });
 
-    if (!friend || !requester) return res.status(404).json({ message: 'User not found' })
-
-    if (friend.friends.includes(requesterUsername) || friend.pendingRequests.includes(requesterUsername)) {
-      return res.status(400).json({ message: 'Already friends or request pending' })
-    }
-
-    friend.pendingRequests.push(requesterUsername)
-    await friend.save()
-
-    res.json({ message: 'Friend request sent' })
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' })
+  if (friend.friends.includes(requesterUsername) || friend.pendingRequests.includes(requesterUsername)) {
+    return res.status(400).json({ message: 'Already friends or request pending' })
   }
+
+  friend.pendingRequests.push(requesterUsername)
+  await friend.save()
+
+  res.json({ message: 'Friend request sent' })
 })
 
 app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
   const { requesterUsername } = req.body
   const friendUsername = req.username
 
-  try {
-    const friend = await User.findOne({ username: friendUsername })
-    const requester = await User.findOne({ username: requesterUsername })
+  const { friend, requester, error, status } = await findUsers(friendUsername, requesterUsername);
+  if (error) return res.status(status).json({ message: error });
 
-    if (!friend || !requester) return res.status(404).json({ message: 'User not found' })
+  friend.pendingRequests = friend.pendingRequests.filter(req => req !== requesterUsername)
+  friend.friends.push(requesterUsername)
+  requester.friends.push(friendUsername)
 
-    friend.pendingRequests = friend.pendingRequests.filter(req => req !== requesterUsername)
-    friend.friends.push(requesterUsername)
-    requester.friends.push(friendUsername)
+  await friend.save()
+  await requester.save()
 
-    await friend.save()
-    await requester.save()
-
-    res.json({ message: 'Friend request accepted' })
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' })
-  }
+  res.json({ message: 'Friend request accepted' })
 })
 
 app.get('/api/getUserRole', verifyToken, async (req, res) => {
