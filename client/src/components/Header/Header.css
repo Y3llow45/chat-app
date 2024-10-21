@@ -65,6 +65,12 @@
   border-radius: 50%;
 }
 
+.profile-pic.notifications {
+  border: 3px solid #4caf50;
+  border-radius: 50%;
+  padding: 0.1px;
+}
+
 .dropdown-menu {
   position: absolute;
   top: 56px;
