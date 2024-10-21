@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const User = require('./models/User')
 const verifyToken = require('./middleware/verifyToken')
 const findUsers = require('./services/findUsers')
+const { publishToQueue, connectRabbitMQ } = require('./services/rabbitmqService');
 
 const app = express()
 const PORT = parseInt(process.env.PORT, 10)
@@ -19,6 +20,9 @@ app.use(bodyParser.json())
 
 mongoose.connect(AtlasUri).then(() => {
   console.log('Connected to db')
+  return connectRabbitMQ()
+}).then(() => {
+  console.log('Connected to RabbitMQ')
 })
 
 app.post('/signup', async (req, res) => {
@@ -110,6 +114,8 @@ app.post('/friendRequest', verifyToken, async (req, res) => {
 
   friend.pendingRequests.push(requesterUsername)
   await friend.save()
+
+  await publishToQueue('friendRequests', { requesterUsername, friendUsername });
 
   res.json({ message: 'Friend request sent' })
 })
