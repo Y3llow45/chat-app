@@ -41,7 +41,6 @@ const Chats = () => {
       if (response.message === 'Friend request sent') {
         setSearchQuery('')
         setSearchResults([])
-        setSelectedUser(null)
         displaySuccess('Friend request sent')
         setFriends(username)
       } else {

@@ -1,3 +1,5 @@
+import React = require("react");
+
 interface FormComponentProps {
   username: string;
   password: string;
