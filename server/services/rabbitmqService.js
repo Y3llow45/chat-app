@@ -6,6 +6,7 @@ const connectRabbitMQ = async () => {
   const connection = await amqp.connect(process.env.RABBITMQ_URI);
   channel = await connection.createChannel();
   console.log('RabbitMQ connected');
+  return channel
 };
 
 const publishToQueue = async (queueName, message) => {

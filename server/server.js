@@ -23,6 +23,12 @@ mongoose.connect(AtlasUri).then(() => {
   return connectRabbitMQ()
 }).then(() => {
   console.log('Connected to RabbitMQ')
+
+  app.listen(PORT, () => {
+    console.log(`Server is listening on port: ${PORT}`)
+  })
+}).catch((err) => {
+  console.error('Error starting server: ', err)
 })
 
 app.post('/signup', async (req, res) => {
@@ -167,6 +173,4 @@ app.get('/check/:type/:input', async (req, res) => {
   }
 })
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port: ${PORT}`)
-})
+
