@@ -2,14 +2,13 @@ const amqp = require('amqplib')
 const express = require('express')
 const http = require('http')
 const { Server } = require('socket.io')
+const { getChannel } = require('./services/rabbitmqService')
 require('dotenv').config()
 
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 const SPORT = parseInt(process.env.SPORT, 10)
-const RABBITMQ_URI = process.env.RABBITMQ_URI
-console.log(RABBITMQ_URI)
 
 io.on('connection', (socket) => {
   console.log('A user connected')
@@ -20,8 +19,7 @@ io.on('connection', (socket) => {
 
 const startRabbitMQConsumer = async () => {
   try {
-    const connection = await amqp.connect(RABBITMQ_URI);
-    const channel = await connection.createChannel();
+    const channel = getChannel()
 
     await channel.assertQueue('friendRequests');
     channel.consume('friendRequests', (msg) => {

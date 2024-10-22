@@ -72,6 +72,8 @@ const Header: React.FC<HeaderProps> = (props) => {
           <div className="dropdown-menu">
             <NavLink to="/settings" className="dropdown-link">Settings</NavLink>
             <br />
+            <NavLink to="/notifications" className="dropdown-link">Notifications</NavLink>
+            <br />
             <NavLink to="/signIn" className="dropdown-link" onClick={logout}>Log out</NavLink>
           </div>
         )}
