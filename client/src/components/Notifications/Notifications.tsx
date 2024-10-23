@@ -1,11 +1,23 @@
 import io from 'socket.io-client';
 import { useEffect } from 'react';
 import { displaySuccess } from '../Notify/Notify';
+import { withUsernameAuth } from '../../contexts/UsernameContext';
 
 const socket = io('http://localhost:5243');
-socket.emit('registerUsername', username);
 
-const Notifications = () => {
+
+interface HeaderProps {
+  setUsername: (username: string) => void;
+  //setUserRole: (role: string) => void;
+  username: string;
+  //userRole: string;
+  //userPfp: number | null;
+}
+
+const Notifications: React.FC<HeaderProps> = (props) => {
+  const { setUsername, username, } = props;
+  socket.emit('registerUsername', username);
+
   useEffect(() => {
     socket.on('friendRequestNotification', (notification) => {
       displaySuccess("Received new friend request")
@@ -16,4 +28,4 @@ const Notifications = () => {
   return <div className='notifications-container'>Notification Component</div>;
 };
 
-export default Notifications;
+export default withUsernameAuth(Notifications);
