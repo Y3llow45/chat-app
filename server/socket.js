@@ -1,14 +1,26 @@
 const amqp = require('amqplib')
 const express = require('express')
 const http = require('http')
-const { Server } = require('socket.io')
+const socket = require('socket.io')
 const { getChannel } = require('./services/rabbitmqService')
+const { connectRabbitMQ } = require('./services/rabbitmqService');
 require('dotenv').config()
 
 const app = express()
-const server = http.createServer(app)
-const io = new Server(server)
+const server = http.createServer(app);
+//const server = http.createServer(app)
+//const io = new Server(server)
 const SPORT = parseInt(process.env.SPORT, 10)
+
+
+io = socket(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+
 
 io.on('connection', (socket) => {
   console.log('A user connected')
@@ -19,7 +31,7 @@ io.on('connection', (socket) => {
 
 const startRabbitMQConsumer = async () => {
   try {
-    const channel = getChannel()
+    const channel = await connectRabbitMQ()
 
     await channel.assertQueue('friendRequests');
     channel.consume('friendRequests', (msg) => {
@@ -27,6 +39,7 @@ const startRabbitMQConsumer = async () => {
 
       const friendSocket = io.sockets.sockets.get(friendUsername);
       if (friendSocket) {
+        console.log('online')
         friendSocket.emit('friendRequestNotification', {
           from: requesterUsername,
           message: `${requesterUsername} sent you a friend request.`

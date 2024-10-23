@@ -5,10 +5,8 @@ const RABBITMQ_URI = process.env.RABBITMQ_URI
 let channel;
 
 const connectRabbitMQ = async () => {
-  console.log("URI: " + RABBITMQ_URI)
   const connection = await amqp.connect(RABBITMQ_URI);
   channel = await connection.createChannel();
-  console.log('RabbitMQ connected');
   return channel
 };
 
@@ -18,4 +16,6 @@ const publishToQueue = async (queueName, message) => {
   channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
 };
 
-module.exports = { connectRabbitMQ, publishToQueue, getChanel: () => channel };
+const getChannel = () => channel;
+
+module.exports = { connectRabbitMQ, publishToQueue, getChannel };
