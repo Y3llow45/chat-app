@@ -42,7 +42,9 @@ const Chats = () => {
         setSearchQuery('')
         setSearchResults([])
         displaySuccess('Friend request sent')
-        setFriends(username)
+        //setFriends(username)
+      } else if (response.message === 'Already friends or request pending') {
+        displayInfo('Already friends or request pending')
       } else {
         displayError('User not found or server error')
       }

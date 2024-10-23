@@ -12,6 +12,7 @@ import Footer from './components/Footer/Footer';
 import { UsernameProvider } from './contexts/UsernameContext';
 import { RoleProvider } from './contexts/RoleContext';
 import { PfpProvider } from './contexts/PfpContext';
+import Notifications from './components/Notifications/Notifications';
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/notifications" element={<Notifications />} />
             </Routes>
             <Footer />
           </div>
