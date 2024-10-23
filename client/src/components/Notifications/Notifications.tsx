@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { displaySuccess } from '../Notify/Notify';
 
 const socket = io('http://localhost:5243');
+socket.emit('registerUsername', username);
 
 const Notifications = () => {
   useEffect(() => {

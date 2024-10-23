@@ -2,16 +2,13 @@ const amqp = require('amqplib')
 const express = require('express')
 const http = require('http')
 const socket = require('socket.io')
-const { getChannel } = require('./services/rabbitmqService')
 const { connectRabbitMQ } = require('./services/rabbitmqService');
 require('dotenv').config()
 
 const app = express()
 const server = http.createServer(app);
-//const server = http.createServer(app)
-//const io = new Server(server)
 const SPORT = parseInt(process.env.SPORT, 10)
-
+const userSocketMap = new Map();
 
 io = socket(server, {
   cors: {
@@ -20,12 +17,19 @@ io = socket(server, {
   }
 });
 
-
-
 io.on('connection', (socket) => {
-  console.log('A user connected')
+  console.log('A user connected:', socket.id);
   socket.on('disconnect', () => {
-    console.log('User disconnected')
+    userSocketMap.forEach((id, username) => {
+      if (id === socket.id) {
+        userSocketMap.delete(username);
+        console.log(`${username} has disconnected`);
+      }
+    });
+  });
+  socket.on('registerUsername', (username) => {
+    userSocketMap.set(username, socket.id);
+    console.log(`${username} is connected with socket id: ${socket.id}`);
   })
 })
 
@@ -36,14 +40,16 @@ const startRabbitMQConsumer = async () => {
     await channel.assertQueue('friendRequests');
     channel.consume('friendRequests', (msg) => {
       const { requesterUsername, friendUsername } = JSON.parse(msg.content.toString());
-
-      const friendSocket = io.sockets.sockets.get(friendUsername);
-      if (friendSocket) {
+      console.log(`Socket, data: ${requesterUsername} and ${friendUsername}`)
+      const friendSocketId = userSocketMap.get(friendUsername);
+      if (friendSocketId) {
         console.log('online')
-        friendSocket.emit('friendRequestNotification', {
+        friendSocketId.emit('friendRequestNotification', {
           from: requesterUsername,
           message: `${requesterUsername} sent you a friend request.`
         });
+      } else {
+        console.log('friend not online')
       }
       channel.ack(msg);
     });
