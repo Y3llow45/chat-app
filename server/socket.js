@@ -3,6 +3,7 @@ const express = require('express')
 const http = require('http')
 const socket = require('socket.io')
 const { connectRabbitMQ } = require('./services/rabbitmqService');
+const { checkRabbitMQForUser } = require('./services/checkMissed')
 require('dotenv').config()
 
 const app = express()
