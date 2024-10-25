@@ -12,44 +12,39 @@ const userSocketMap = new Map();
 
 io = socket(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: "*"
   }
 });
 
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
   socket.on('disconnect', () => {
     userSocketMap.forEach((id, username) => {
       if (id === socket.id) {
         userSocketMap.delete(username);
-        console.log(`${username} has disconnected`);
       }
     });
   });
-  socket.on('registerUsername', (username) => {
+  socket.on('registerUsername', async (username) => {
     userSocketMap.set(username, socket.id);
-    console.log(`${username} is connected with socket id: ${socket.id}`);
+    const missedMessages = await checkRabbitMQForUser(username);
+    missedMessages.forEach((msg) => {
+      socket.emit('friendRequestNotification', msg);
+    });
   })
 })
 
 const startRabbitMQConsumer = async () => {
   try {
     const channel = await connectRabbitMQ()
-
     await channel.assertQueue('friendRequests');
     channel.consume('friendRequests', (msg) => {
       const { requesterUsername, friendUsername } = JSON.parse(msg.content.toString());
-      console.log(`Socket, data: ${requesterUsername} and ${friendUsername}`)
       const friendSocketId = userSocketMap.get(friendUsername);
       if (friendSocketId) {
-        console.log('online')
         friendSocketId.emit('friendRequestNotification', {
           from: requesterUsername,
           message: `${requesterUsername} sent you a friend request.`
         });
-      } else {
-        console.log('friend not online')
       }
       channel.ack(msg);
     });
