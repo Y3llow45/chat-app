@@ -13,7 +13,7 @@ const userSocketMap = new Map();
 
 io = socket(server, {
   cors: {
-    origin: "*"
+    origin: "http://localhost:5173",
   }
 });
 
@@ -41,8 +41,9 @@ const startRabbitMQConsumer = async () => {
     channel.consume('friendRequests', (msg) => {
       const { requesterUsername, friendUsername } = JSON.parse(msg.content.toString());
       const friendSocketId = userSocketMap.get(friendUsername);
-      if (friendSocketId) {
-        friendSocketId.emit('friendRequestNotification', {
+      const friendSocket = io.sockets.sockets.get(friendSocketId);
+      if (friendSocket) {
+        friendSocket.emit('friendRequestNotification', {
           from: requesterUsername,
           message: `${requesterUsername} sent you a friend request.`
         });

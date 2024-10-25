@@ -28,4 +28,4 @@ const checkRabbitMQForUser = async (username) => {
   }
 };
 
-module.exports = checkRabbitMQForUser;
+module.exports = { checkRabbitMQForUser };
