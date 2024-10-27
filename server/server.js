@@ -121,6 +121,7 @@ app.post('/friendRequest', verifyToken, async (req, res) => {
   friend.pendingRequests.push(requesterUsername)
   await friend.save()
 
+  console.log(`Published friend request from ${requesterUsername} to ${friendUsername}`);
   await publishToQueue('friendRequests', { requesterUsername, friendUsername });
 
   res.json({ message: 'Friend request sent' })
@@ -148,6 +149,21 @@ app.get('/api/getUserRole', verifyToken, async (req, res) => {
     const username = req.username
     const user = await User.findOne({ username })
     res.status(200).json({ role: user._doc.role })
+  } catch (error) {
+    res.status(401).json({ message: 'server error' })
+  }
+})
+
+app.get('/clear', async (req, res) => {
+  try {
+    const username = 'bobi'
+    const second_username = 'test'
+    const user = await User.findOne({ username })
+    const second_user = await User.findOne({ username: second_username })
+    user.pendingRequests = []
+    second_user.pendingRequests = []
+    await user.save()
+    await second_user.save()
   } catch (error) {
     res.status(401).json({ message: 'server error' })
   }

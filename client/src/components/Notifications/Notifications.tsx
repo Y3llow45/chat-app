@@ -2,16 +2,13 @@ import io from 'socket.io-client';
 import { useEffect } from 'react';
 import { displaySuccess } from '../Notify/Notify';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
+import { clear } from '../../services/Services';
 
 const socket = io('http://localhost:5243');
 
-
 interface HeaderProps {
   setUsername: (username: string) => void;
-  //setUserRole: (role: string) => void;
   username: string;
-  //userRole: string;
-  //userPfp: number | null;
 }
 
 const Notifications: React.FC<HeaderProps> = (props) => {
@@ -33,7 +30,11 @@ const Notifications: React.FC<HeaderProps> = (props) => {
     };
   }, []);
 
-  return <div className='notifications-container'>Notification Component</div>;
+  return (
+    <div className='notifications-container'>
+      <p>Notification Component</p>
+      <button onClick={clear}>Clear pending requests</button>
+    </div>);
 };
 
 export default withUsernameAuth(Notifications);

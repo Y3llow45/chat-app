@@ -37,6 +37,15 @@ export const sendFriendRequest = (friendUsername: string) => {
   });
 };
 
+export const clear = () => {
+  return fetch(`${url}clear`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+};
+
 export const acceptFriendRequest = (requesterUsername: string) => {
   return fetchWithAuth('acceptFriendRequest', {
     method: 'POST',
