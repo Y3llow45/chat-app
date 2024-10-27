@@ -25,15 +25,20 @@ function App() {
     if (username) {
       socket.emit('reigsterUsername', username)
     }
-
-    socket.on('friendRequestNotification', () => {
-      displaySuccess("Received new friend request");
-      // Trigger green circle indicator state here
-    });
-    return () => {
-      socket.off('friendRequestNotification');
-    };
   }, [username])
+
+  useEffect(() => {
+    const handleNotification = (notification: string) => {
+      displaySuccess("Received new friend request");
+      console.log(notification);
+    };
+
+    socket.on('friendRequestNotification', handleNotification);
+
+    return () => {
+      socket.off('friendRequestNotification', handleNotification);
+    };
+  }, [])
 
   return (
     <PfpProvider>

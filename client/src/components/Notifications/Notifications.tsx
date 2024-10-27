@@ -18,14 +18,14 @@ interface HeaderProps {
 
 const Notifications: React.FC<HeaderProps> = (props) => {
   const { setUsername, username, } = props;
-  useEffect(() => {
+  /*useEffect(() => {                        // don't need that for now
     if (!socket.hasRegistered) {
       socket.emit('registerUsername', username);
       socket.hasRegistered = true;
     }
-  }, [username]);
+  }, [username]);*/
 
-  useEffect(() => {
+  /*useEffect(() => {                          // don't need that for now
     const handleNotification = (notification: string) => {
       displaySuccess("Received new friend request");
       console.log(notification);
@@ -36,7 +36,7 @@ const Notifications: React.FC<HeaderProps> = (props) => {
     return () => {
       socket.off('friendRequestNotification', handleNotification);
     };
-  }, []);
+  }, []);*/
 
   return (
     <div className='notifications-container'>

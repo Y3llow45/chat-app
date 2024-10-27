@@ -1,5 +1,5 @@
 import './Header.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
 import logo from '../../assets/logo.png';
@@ -12,6 +12,7 @@ import { withUsernameAuth } from '../../contexts/UsernameContext';  // context
 import { withRoleAuth } from '../../contexts/RoleContext';  // context
 import { withPfpAuth } from '../../contexts/PfpContext';  // context
 import { displaySuccess } from '../Notify/Notify';  // notifications
+import socket from '../../services/socket';
 
 const images = [userPic, pfp1, pfp2, pfp3, pfp4];
 
@@ -19,16 +20,16 @@ interface HeaderProps {
   setUsername: (username: string) => void;
   setUserRole: (role: string) => void;
   username: string;
-  userRole: string;
   userPfp: number | null;
 }
 
 const Header: React.FC<HeaderProps> = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { setUsername, setUserRole, username, userRole, userPfp } = props;
+  const { setUsername, setUserRole, username, userPfp } = props;
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const [hasNotification, setHasNotification] = useState(false);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -37,6 +38,28 @@ const Header: React.FC<HeaderProps> = (props) => {
     setUserRole('guest');
     displaySuccess('Logged out');
   };
+
+  const clearNotifications = () => {
+    setHasNotification(false);
+  }
+
+  useEffect(() => {
+    if (username) {
+      socket.emit('reigsterUsername', username)
+    }
+
+    const handleFriendRequestNotification = () => {
+      console.log(`Recieved new notification in Notifications component`)
+      setHasNotification(true);
+    };
+
+    socket.on('friendRequestNotification', handleFriendRequestNotification);
+
+    return () => {
+      socket.off('friendRequestNotification', handleFriendRequestNotification);
+    };
+  }, [username]);
+
 
   return (
     <header className="header-container">
@@ -72,7 +95,7 @@ const Header: React.FC<HeaderProps> = (props) => {
           <div className="dropdown-menu">
             <NavLink to="/settings" className="dropdown-link">Settings</NavLink>
             <br />
-            <NavLink to="/notifications" className="dropdown-link">Notifications</NavLink>
+            <NavLink to="/notifications" className="dropdown-link" onClick={clearNotifications}>Notifications</NavLink>
             <br />
             <NavLink to="/signIn" className="dropdown-link" onClick={logout}>Log out</NavLink>
           </div>
