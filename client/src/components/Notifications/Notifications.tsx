@@ -1,10 +1,15 @@
 import io from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import { useEffect } from 'react';
 import { displaySuccess } from '../Notify/Notify';
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { clear } from '../../services/Services';
 
-const socket = io('http://localhost:5243');
+interface CustomSocket extends Socket {
+  hasRegistered?: boolean;
+}
+
+const socket: CustomSocket = io('http://localhost:5243');
 
 interface HeaderProps {
   setUsername: (username: string) => void;
@@ -14,7 +19,10 @@ interface HeaderProps {
 const Notifications: React.FC<HeaderProps> = (props) => {
   const { setUsername, username, } = props;
   useEffect(() => {
-    socket.emit('registerUsername', username);
+    if (!socket.hasRegistered) {
+      socket.emit('registerUsername', username);
+      socket.hasRegistered = true;
+    }
   }, [username]);
 
   useEffect(() => {
