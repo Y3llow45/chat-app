@@ -45,7 +45,8 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   useEffect(() => {
     if (username) {
-      socket.emit('reigsterUsername', username)
+      console.log(`Registered and username: ${username}`)
+      socket.emit('registerUsername', username)
     }
 
     const handleFriendRequestNotification = () => {

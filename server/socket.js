@@ -46,13 +46,13 @@ const startRabbitMQConsumer = async () => {
     channel.consume('friendRequests', (msg) => {
       const { requesterUsername, friendUsername } = JSON.parse(msg.content.toString());
       const friendSocketId = userSocketMap.get(friendUsername);
-      console.log('Current userSocketMap:', Array.from(userSocketMap.entries()));
-      console.log(`FriendsSocketId: ${friendSocketId}`)
       const friendSocket = io.sockets.sockets.get(friendSocketId);
       if (!friendSocketId || !friendSocket) {
         console.log(`User ${friendUsername} is not currently connected.`);
         return;
       }
+      console.log('Current userSocketMap:', Array.from(userSocketMap.entries()));
+      console.log(`FriendsSocketId: ${friendSocketId}`)
       console.log(`Channel consume: ${requesterUsername} to ${friendUsername} and fr socket: ${friendSocket}`);
 
       if (friendSocket) {
