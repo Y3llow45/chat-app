@@ -27,14 +27,13 @@ io.on('connection', (socket) => {
     });
   });
   socket.on('registerUsername', async (username) => {
+    if (userSocketMap.get(username) === socket.id) return;
     userSocketMap.set(username, socket.id);
-    console.log(`${username} registered with socket ID: ${socket.id}`);
     const missedMessages = await checkRabbitMQForUser(username);
-    console.log(`${username} has missed messages: ${missedMessages}`)
+    console.log(`${username} has missed messages: ${missedMessages} and ${missedMessages.length}`)
     if (missedMessages && missedMessages.length > 0) {
       missedMessages.forEach((msg) => {
         socket.emit('friendRequestNotification', msg);
-        console.log('sending fr req notifications socket.js')
       });
     }
   })
@@ -53,9 +52,8 @@ const startRabbitMQConsumer = async () => {
       if (!friendSocketId || !friendSocket) {
         console.log(`User ${friendUsername} is not currently connected.`);
         const missedQueueName = `missedMessages_${friendUsername}`;
-
         await channel.assertQueue(missedQueueName, { durable: true });
-        channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
+        //channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
         console.log(`Stored missed message for ${friendUsername} in ${missedQueueName}`);
 
         channel.ack(msg);
@@ -65,14 +63,13 @@ const startRabbitMQConsumer = async () => {
       console.log(`FriendsSocketId: ${friendSocketId}`)
       console.log(`Channel consume: ${requesterUsername} to ${friendUsername} and fr socket: ${friendSocket}`);
 
-      if (friendSocket) {
-        console.log(`Friend online and Published friend request from ${requesterUsername} to ${friendUsername}`);
-        friendSocket.emit('friendRequestNotification', {
-          from: requesterUsername,
-          message: `${requesterUsername} sent you a friend request.`
-        });
-        channel.ack(msg);
-      }
+      console.log(`Friend online and Published friend request from ${requesterUsername} to ${friendUsername}`);
+      friendSocket.emit('friendRequestNotification', {
+        from: requesterUsername,
+        message: `${requesterUsername} sent you a friend request.`
+      });
+
+      channel.ack(msg);
     });
   } catch (err) {
     console.error('Failed to start RabbitMQ consumer: ', err)
