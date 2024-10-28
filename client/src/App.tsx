@@ -9,37 +9,12 @@ import SignIn from './components/SignIn/SignIn';
 import Chats from './components/Chats/Chats';
 import Settings from './components/Settings/Settings';
 import Footer from './components/Footer/Footer';
-import { displaySuccess } from './components/Notify/Notify';
-import { UsernameProvider, useUsernameAuth } from './contexts/UsernameContext';
+import { UsernameProvider } from './contexts/UsernameContext';
 import { RoleProvider } from './contexts/RoleContext';
 import { PfpProvider } from './contexts/PfpContext';
 import Notifications from './components/Notifications/Notifications';
-import { useEffect } from 'react';
-import socket from './services/socket';
-
 
 function App() {
-  const { username } = useUsernameAuth()
-
-  useEffect(() => {
-    if (username) {
-      socket.emit('reigsterUsername', username)
-    }
-  }, [username])
-
-  useEffect(() => {
-    const handleNotification = (notification: string) => {
-      displaySuccess("Received new friend request");
-      console.log(notification);
-    };
-
-    socket.on('friendRequestNotification', handleNotification);
-
-    return () => {
-      socket.off('friendRequestNotification', handleNotification);
-    };
-  }, [])
-
   return (
     <PfpProvider>
       <UsernameProvider>

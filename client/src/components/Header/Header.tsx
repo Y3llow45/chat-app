@@ -51,8 +51,11 @@ const Header: React.FC<HeaderProps> = (props) => {
 
     const handleFriendRequestNotification = () => {
       console.log(`Recieved new notification in Notifications component`)
+      displaySuccess('FR REQ')
       setHasNotification(true);
     };
+
+    socket.off('friendRequestNotification');
 
     socket.on('friendRequestNotification', handleFriendRequestNotification);
 
