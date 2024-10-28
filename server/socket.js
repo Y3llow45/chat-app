@@ -19,6 +19,7 @@ io = socket(server, {
 
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
+    console.log(`${socket} left`)
     userSocketMap.forEach((id, username) => {
       if (id === socket.id) {
         userSocketMap.delete(username);
@@ -43,12 +44,21 @@ const startRabbitMQConsumer = async () => {
   try {
     const channel = await connectRabbitMQ()
     await channel.assertQueue('friendRequests');
-    channel.consume('friendRequests', (msg) => {
+
+    channel.consume('friendRequests', async (msg) => {
       const { requesterUsername, friendUsername } = JSON.parse(msg.content.toString());
       const friendSocketId = userSocketMap.get(friendUsername);
       const friendSocket = io.sockets.sockets.get(friendSocketId);
+
       if (!friendSocketId || !friendSocket) {
         console.log(`User ${friendUsername} is not currently connected.`);
+        const missedQueueName = `missedMessages_${friendUsername}`;
+
+        await channel.assertQueue(missedQueueName, { durable: true });
+        channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
+        console.log(`Stored missed message for ${friendUsername} in ${missedQueueName}`);
+
+        channel.ack(msg);
         return;
       }
       console.log('Current userSocketMap:', Array.from(userSocketMap.entries()));

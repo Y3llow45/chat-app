@@ -9,19 +9,18 @@ const checkRabbitMQForUser = async (username) => {
     const channel = await connection.createChannel();
 
     const queueName = `missedMessages_${username}`;
-
     await channel.assertQueue(queueName, { durable: true });
 
     const messages = [];
     let msg;
-    while ((msg = await channel.get(queueName, { noAck: true }))) {
+
+    while ((msg = await channel.get(queueName))) {
       messages.push(JSON.parse(msg.content.toString()));
       channel.ack(msg);
     }
 
     await channel.close();
     await connection.close();
-
     return messages;
   } catch (err) {
     console.error(`Failed to retrieve missed messages for ${username}:`, err);
