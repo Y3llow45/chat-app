@@ -50,20 +50,14 @@ const startRabbitMQConsumer = async () => {
       const friendSocket = io.sockets.sockets.get(friendSocketId);
 
       if (!friendSocketId || !friendSocket) {
-        console.log(`User ${friendUsername} is not currently connected.`);
         const missedQueueName = `missedMessages_${friendUsername}`;
         await channel.assertQueue(missedQueueName, { durable: true });
         //channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
-        console.log(`Stored missed message for ${friendUsername} in ${missedQueueName}`);
 
         channel.ack(msg);
         return;
       }
-      console.log('Current userSocketMap:', Array.from(userSocketMap.entries()));
-      console.log(`FriendsSocketId: ${friendSocketId}`)
-      console.log(`Channel consume: ${requesterUsername} to ${friendUsername} and fr socket: ${friendSocket}`);
 
-      console.log(`Friend online and Published friend request from ${requesterUsername} to ${friendUsername}`);
       friendSocket.emit('friendRequestNotification', {
         from: requesterUsername,
         message: `${requesterUsername} sent you a friend request.`
