@@ -52,7 +52,7 @@ const startRabbitMQConsumer = async () => {
       if (!friendSocketId || !friendSocket) {
         const missedQueueName = `missedMessages_${friendUsername}`;
         await channel.assertQueue(missedQueueName, { durable: true });
-        //channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
+        channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
 
         channel.ack(msg);
         return;
