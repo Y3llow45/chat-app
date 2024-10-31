@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { UsernameProvider } from './contexts/UsernameContext';
 import { RoleProvider } from './contexts/RoleContext.jsx'
 import { PfpProvider } from './contexts/PfpContext.jsx'
+import { NotificationProvider } from './contexts/NotificationContext.js'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')!).render(
       <UsernameProvider>
         <RoleProvider>
           <PfpProvider>
-            <App />
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
           </PfpProvider>
         </RoleProvider>
       </UsernameProvider>

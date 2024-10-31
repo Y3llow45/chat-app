@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = (props) => {
 
     const handleFriendRequestNotification = () => {
       console.log(`Recieved new notification in Notifications component`)
-      displaySuccess('FR REQ')
+      displaySuccess('Received a friend request')
       setHasNotification(true);
     };
 
@@ -91,8 +91,8 @@ const Header: React.FC<HeaderProps> = (props) => {
 
       <div className="profile-container" onClick={toggleDropdown}>
         {(userPfp !== undefined && userPfp !== null) ?
-          <img src={images[userPfp]} alt="User Profile" className="profile-pic" /> :
-          <img src={userPic} alt="User Profile" className="profile-pic" />
+          <img src={images[userPfp]} alt="User Profile" className={`profile-pic ${hasNotification ? 'notifications' : ''}`} /> :
+          <img src={userPic} alt="User Profile" className={`profile-pic ${hasNotification ? 'notifications' : ''}`} />
         }
 
         {isDropdownOpen && (
