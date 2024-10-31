@@ -5,6 +5,7 @@ import { useNotification } from '../../contexts/NotificationContext';
 interface HeaderProps {
   setUsername: (username: string) => void;
   username: string;
+  isAuthenticated: boolean;
 }
 
 const Notifications: React.FC<HeaderProps> = () => {

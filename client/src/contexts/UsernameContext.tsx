@@ -6,14 +6,14 @@ interface UsernameContextType {
   isAuthenticated: boolean;
 }
 
-const UsernameContext = createContext < UsernameContextType | undefined > (undefined);
+const UsernameContext = createContext<UsernameContextType | undefined>(undefined);
 
 interface UsernameProviderProps {
   children: ReactNode;
 }
 
 export const UsernameProvider: FC<UsernameProviderProps> = ({ children }) => {
-  const [username, setUsername] = useState < string > (localStorage.getItem('username') || 'Guest');
+  const [username, setUsername] = useState<string>(localStorage.getItem('username') || 'Guest');
   const isAuthenticated = username !== 'Guest';
 
   return (
@@ -32,7 +32,7 @@ export const useUsernameAuth = (): UsernameContextType => {
 };
 
 interface WithUsernameAuthProps {
-  setUsername: React.Dispatch<React.SetStateAction<string>>;
+  setUsername: (username: string) => void;
   username: string;
   isAuthenticated: boolean;
 }

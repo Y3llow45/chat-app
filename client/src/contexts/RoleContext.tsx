@@ -5,14 +5,14 @@ interface RoleContextType {
   setUserRole: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const RoleContext = createContext < RoleContextType | undefined > (undefined);
+const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 interface RoleProviderProps {
   children: ReactNode;
 }
 
 export const RoleProvider: FC<RoleProviderProps> = ({ children }) => {
-  const [userRole, setUserRole] = useState < string | null > (null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   return (
     <RoleContext.Provider value={{ userRole, setUserRole }}>

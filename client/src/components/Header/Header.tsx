@@ -19,7 +19,7 @@ const images = [userPic, pfp1, pfp2, pfp3, pfp4];
 
 interface HeaderProps {
   setUsername: (username: string) => void;
-  setUserRole: (role: string) => void;
+  setUserRole: React.Dispatch<React.SetStateAction<string | null>>;
   username: string;
   userPfp: number | null;
 }
