@@ -11,6 +11,7 @@ import pfp4 from '../../assets/4.png';  // avatar
 import { withUsernameAuth } from '../../contexts/UsernameContext';  // context
 import { withRoleAuth } from '../../contexts/RoleContext';  // context
 import { withPfpAuth } from '../../contexts/PfpContext';  // context
+import { useNotification } from '../../contexts/NotificationContext';
 import { displaySuccess } from '../Notify/Notify';  // notifications
 import socket from '../../services/socket';
 
@@ -30,6 +31,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const [hasNotification, setHasNotification] = useState(false);
+  const { addNotification } = useNotification();
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -49,8 +51,13 @@ const Header: React.FC<HeaderProps> = (props) => {
       socket.emit('registerUsername', username)
     }
 
-    const handleFriendRequestNotification = () => {
+    const handleFriendRequestNotification = (notification: { from: string; }) => {
       console.log(`Recieved new notification in Notifications component`)
+      addNotification({
+        id: `${Date.now()}-${notification.from}`,
+        message: `${notification.from} sent you a friend request.`,
+        from: notification.from,
+      });
       displaySuccess('Received a friend request')
       setHasNotification(true);
     };
