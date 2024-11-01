@@ -32,8 +32,11 @@ io.on('connection', (socket) => {
     const missedMessages = await checkRabbitMQForUser(username);
     console.log(`${username} has missed messages: ${missedMessages} and ${missedMessages.length}`)
     if (missedMessages && missedMessages.length > 0) {
-      missedMessages.forEach((msg) => {
-        socket.emit('friendRequestNotification', msg);
+      missedMessages.forEach((obj) => {
+        socket.emit('friendRequestNotification', {
+          from: obj.requesterUsername,
+          message: `${obj.requesterUsername} sent you a friend request.`
+        });
       });
     }
   })
