@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './SignUp.css';
-import { NavLink } from 'react-router-dom';
+import { NavigateFunction, NavLink } from 'react-router-dom';
 import { signUp, checkDuplicate } from '../../services/Services';
 import FormComponent from '../Form/FormComponent/FormComponent';
 import { handleInputChangeComponent } from '../Form/handleInputChange/handleInputChange';
@@ -9,14 +9,14 @@ import navWrap from '../Form/NavWrap/NavWrap';
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/;
 
+interface SignUpProps {
+  navigate: NavigateFunction;
+}
+
 interface SignUpState {
   username: string;
   email: string;
   password: string;
-}
-
-interface SignUpProps {
-  navigate: (path: string) => void;
 }
 
 class SignUp extends Component<SignUpProps, SignUpState> {

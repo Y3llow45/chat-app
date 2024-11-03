@@ -1,21 +1,22 @@
-import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
-import './Footer.css'
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import './Footer.css';
 
-function Footer () {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth)
+const Footer: React.FC = () => {
+  const [screenWidth, setScreenWidth] = useState < number > (window.innerWidth);
 
   const handleResize = () => {
-    setScreenWidth(window.innerWidth)
-  }
+    setScreenWidth(window.innerWidth);
+  };
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-  const startX = -100
-  const middleX = screenWidth * 0.45
-  const endX = screenWidth * 0.95
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const startX = -100;
+  const middleX = screenWidth * 0.45;
+  const endX = screenWidth * 0.95;
 
   return (
     <footer className='home-footer'>
@@ -27,7 +28,7 @@ function Footer () {
         animate={{ x: [startX, middleX, endX] }}
         transition={{ duration: 2, repeat: Infinity, repeatType: 'loop' }}
       />
-      <img src='/src/assets/server.jpg' alt='server' className='server' style={{ width: '5rem' }} />
+      <img src='/src/assets/server.jpg' alt='Server' className='server' style={{ width: '5rem' }} />
       <motion.img
         src='/src/assets/mail.png'
         alt='Mail'
@@ -39,7 +40,7 @@ function Footer () {
       <br />
       <p className='rights'>© 2024 ChatApp. All rights reserved.</p>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
