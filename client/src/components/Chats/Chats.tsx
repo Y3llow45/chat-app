@@ -1,30 +1,48 @@
 import './Chats.css'
-import { useState } from 'react'
+import { useState, ChangeEvent } from 'react'
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify'
-import { searchUsers } from '../../services/Services'
+import { searchUsers, sendFriendRequest } from '../../services/Services'
 import userPic from '../../assets/user.jpg' // default
 import pfp1 from '../../assets/1.png' // avatar
 import pfp2 from '../../assets/2.png' // avatar
 import pfp3 from '../../assets/3.png' // avatar
 import pfp4 from '../../assets/4.png' // avatar
-import { sendFriendRequest } from '../../services/Services'
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
-const Chats = () => {
-  const [message, setMessage] = useState('')
-  const [messages, setMessages] = useState([])
-  const [friends, setFriends] = useState([
-    { id: 1, username: 'Friend1', pfp: 'pfp1.jpg' },
-    { id: 2, username: 'Friend2', pfp: 'pfp2.jpg' }
-  ])
-  const [participants, setParticipants] = useState(['Me', 'Friend1'])
-  const [selectedChat, setSelectedChat] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState([])
+interface Friend {
+  id: number;
+  username: string;
+  pfp: string;
+}
 
-  const MAX_FILE_SIZE_BYTES = 10000000
+interface Message {
+  from: string;
+  content: string;
+}
+
+interface User {
+  _id: string;
+  username: string;
+  profilePic: number;
+}
+
+interface FriendRequestResponse {
+  message: string;
+}
+
+const Chats: React.FC = () => {
+  const [message, setMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [participants, setParticipants] = useState<string[]>(['Me', 'Friend1']);
+  const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+
+  const friends = useSelector((state: RootState) => state.friends.friends);
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
 
-  const handleSearchChange = async (e) => {
+  const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value
     setSearchQuery(query)
 
@@ -36,13 +54,12 @@ const Chats = () => {
     }
   }
 
-  const handleAddFriend = (username) => {
-    sendFriendRequest(username).then((response) => {
+  const handleAddFriend = (username: string) => {
+    sendFriendRequest(username).then((response: FriendRequestResponse | undefined) => {  //Object is possibly 'undefined'.
       if (response.message === 'Friend request sent') {
         setSearchQuery('')
         setSearchResults([])
         displaySuccess('Friend request sent')
-        //setFriends(username)
       } else if (response.message === 'Already friends or request pending') {
         displayInfo('Already friends or request pending')
       } else {
@@ -58,16 +75,7 @@ const Chats = () => {
     }
   }
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0]
-    if (file && file.size <= MAX_FILE_SIZE_BYTES) {
-      displaySuccess('File sent:', file.name)
-    } else {
-      displayInfo('File size must be less than 10MB')
-    }
-  }
-
-  const selectChat = (friend) => {
+  const selectChat = (friend: Friend) => {
     setSelectedChat(friend)
     setParticipants(['Me', friend.username])
   }
@@ -117,15 +125,6 @@ const Chats = () => {
           ))}
         </div>
         <div className='input-container'>
-          <label htmlFor='file-upload' className='file-upload'>
-            📎
-            <input
-              type='file'
-              id='file-upload'
-              onChange={handleFileUpload}
-              style={{ display: 'none' }}
-            />
-          </label>
           <input
             type='text'
             value={message}

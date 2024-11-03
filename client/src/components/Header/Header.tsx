@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { slide as Menu } from 'react-burger-menu';
 import logo from '../../assets/logo.png';
-import userPic from '../../assets/user.jpg';  //default
+import userPic from '../../assets/user.jpg';  //default avatar
 import pfp1 from '../../assets/1.png';  // avatar
 import pfp2 from '../../assets/2.png';  // avatar
 import pfp3 from '../../assets/3.png';  // avatar
@@ -13,7 +13,9 @@ import { withRoleAuth } from '../../contexts/RoleContext';  // context
 import { withPfpAuth } from '../../contexts/PfpContext';  // context
 import { useNotification } from '../../contexts/NotificationContext';
 import { displaySuccess } from '../Notify/Notify';  // notifications
-import socket from '../../services/socket';
+import socket from '../../services/socket';  // global socket
+import { useDispatch } from 'react-redux';
+import { addFriend } from '../../store/friendsSlice';
 
 const images = [userPic, pfp1, pfp2, pfp3, pfp4];
 
@@ -32,6 +34,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const [hasNotification, setHasNotification] = useState(false);
   const { addNotification } = useNotification();
+  const dispatch = useDispatch();
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -47,19 +50,19 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   useEffect(() => {
     if (username) {
-      console.log(`Registered and username: ${username}`)
       socket.emit('registerUsername', username)
     }
 
     const handleFriendRequestNotification = (notification: { from: string; }) => {
-      console.log(`Recieved new notification in Notifications component`)
       addNotification({
         id: `${Date.now()}-${notification.from}`,
         message: `${notification.from} sent you a friend request.`,
         from: notification.from,
       });
+
       displaySuccess('Received a friend request')
       setHasNotification(true);
+      dispatch(addFriend({ id: Date.now(), username: notification.from, pfp: userPic }));
     };
 
     socket.off('friendRequestNotification');
