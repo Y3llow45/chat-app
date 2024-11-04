@@ -27,10 +27,6 @@ interface User {
   profilePic: number;
 }
 
-interface FriendRequestResponse {
-  message: string;
-}
-
 const Chats: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -55,7 +51,7 @@ const Chats: React.FC = () => {
   }
 
   const handleAddFriend = (username: string) => {
-    sendFriendRequest(username).then((response: FriendRequestResponse | undefined) => {  //Object is possibly 'undefined'.
+    sendFriendRequest(username).then((response) => {  //Object is possibly 'undefined'.
       if (response.message === 'Friend request sent') {
         setSearchQuery('')
         setSearchResults([])

@@ -30,11 +30,22 @@ export const searchUsers = (username: string) => {
   return fetchWithAuth(`searchUsers/${username}`);
 };
 
-export const sendFriendRequest = (friendUsername: string) => {
-  return fetchWithAuth('friendRequest', {
-    method: 'POST',
-    body: JSON.stringify({ friendUsername }),
-  });
+export const sendFriendRequest = async (friendUsername: string) => {
+  try {
+    const response = await fetchWithAuth('friendRequest', {
+      method: 'POST',
+      body: JSON.stringify({ friendUsername }),
+    });
+
+    if (!response.ok) {
+      return { message: 'Request failed' };
+    }
+
+    return response;
+  } catch (error) {
+    console.error('Error sending friend request:', error);
+    return { message: 'Network or server error' };
+  }
 };
 
 export const clear = () => {
