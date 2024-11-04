@@ -26,8 +26,8 @@ const Home = () => {
             <p>React</p>
           </div>
           <div className="tech-item">
-            <img src="/src/assets/nextjs.svg" alt="Next.js" className="tech-logo" />
-            <p>Next.js</p>
+            <img src="/src/assets/express.png" alt="Express.js" className="tech-logo" />
+            <p>Express.js</p>
           </div>
           <div className="tech-item">
             <img src="/src/assets/socket.png" alt="Socket.io" className="tech-logo" />
