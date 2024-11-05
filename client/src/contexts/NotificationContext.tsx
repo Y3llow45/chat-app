@@ -27,7 +27,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = (notification: Notification) => {
-    setNotifications((prevNotifications) => [...prevNotifications, notification]);
+    setNotifications((prev) => [...prev, notification]);
   };
 
   const clearNotifications = () => {
@@ -35,9 +35,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const removeNotification = (id: string) => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter((notification) => notification.id !== id)
-    );
+    setNotifications((prev) => prev.filter((notification) => notification.id !== id))
   };
 
   return (

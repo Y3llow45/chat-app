@@ -11,10 +11,7 @@ interface FriendsState {
 }
 
 const initialState: FriendsState = {
-  friends: [
-    { id: 1, username: 'Friend1', pfp: 'pfp1.jpg' },
-    { id: 2, username: 'Friend2', pfp: 'pfp2.jpg' },
-  ],
+  friends: [],
 };
 
 const friendsSlice = createSlice({

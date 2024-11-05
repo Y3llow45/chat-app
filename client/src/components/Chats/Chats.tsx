@@ -51,7 +51,8 @@ const Chats: React.FC = () => {
   }
 
   const handleAddFriend = (username: string) => {
-    sendFriendRequest(username).then((response) => {  //Object is possibly 'undefined'.
+    sendFriendRequest(username).then((response) => {
+      console.log(response)
       if (response.message === 'Friend request sent') {
         setSearchQuery('')
         setSearchResults([])

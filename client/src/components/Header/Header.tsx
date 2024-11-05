@@ -14,8 +14,6 @@ import { withPfpAuth } from '../../contexts/PfpContext';  // context
 import { useNotification } from '../../contexts/NotificationContext';
 import { displaySuccess } from '../Notify/Notify';  // notifications
 import socket from '../../services/socket';  // global socket
-import { useDispatch } from 'react-redux';
-import { addFriend } from '../../store/friendsSlice';
 
 const images = [userPic, pfp1, pfp2, pfp3, pfp4];
 
@@ -34,7 +32,6 @@ const Header: React.FC<HeaderProps> = (props) => {
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const [hasNotification, setHasNotification] = useState(false);
   const { addNotification } = useNotification();
-  const dispatch = useDispatch();
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -62,7 +59,6 @@ const Header: React.FC<HeaderProps> = (props) => {
 
       displaySuccess('Received a friend request')
       setHasNotification(true);
-      dispatch(addFriend({ id: Date.now(), username: notification.from, pfp: userPic }));
     };
 
     socket.off('friendRequestNotification');

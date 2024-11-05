@@ -128,20 +128,23 @@ app.post('/friendRequest', verifyToken, async (req, res) => {
 })
 
 app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
-  const { requesterUsername } = req.body
-  const friendUsername = req.username
+  try {
+    const { requesterUsername } = req.body
+    const friendUsername = req.username
 
-  const { friend, requester, error, status } = await findUsers(friendUsername, requesterUsername);
-  if (error) return res.status(status).json({ message: error });
+    const { friend, requester, error, status } = await findUsers(friendUsername, requesterUsername);
+    if (error) return res.status(status).json({ message: error });
 
-  friend.pendingRequests = friend.pendingRequests.filter(req => req !== requesterUsername)
-  friend.friends.push(requesterUsername)
-  requester.friends.push(friendUsername)
+    friend.pendingRequests = friend.pendingRequests.filter(req => req !== requesterUsername)
+    friend.friends.push(requesterUsername)
+    requester.friends.push(friendUsername)
+    await friend.save()
+    await requester.save()
 
-  await friend.save()
-  await requester.save()
-
-  res.json({ message: 'Friend request accepted' })
+    res.json({ message: 'Friend request accepted' })
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 app.get('/api/getUserRole', verifyToken, async (req, res) => {
@@ -162,6 +165,8 @@ app.get('/clear', async (req, res) => {
     const second_user = await User.findOne({ username: second_username })
     user.pendingRequests = []
     second_user.pendingRequests = []
+    user.friends = []
+    second_user.friends = []
     await user.save()
     await second_user.save()
   } catch (error) {
