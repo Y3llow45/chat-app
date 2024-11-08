@@ -161,7 +161,11 @@ app.get('/api/getFriends', verifyToken, async (req, res) => {
   try {
     const username = req.username
     const user = await User.findOne({ username })
-    res.status(200).json({ friends: user._doc.friends })
+    const friends = user.friends.map((friendUsername, index) => ({
+      id: index,
+      username: friendUsername,
+    }));
+    res.status(200).json({ friends });
   } catch (error) {
     res.status(401).json({ message: 'server error' })
   }

@@ -1,7 +1,7 @@
 import './Chats.css'
 import { useState, ChangeEvent, useEffect } from 'react'
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify'
-import { searchUsers, sendFriendRequest } from '../../services/Services'
+import { getFriends, searchUsers, sendFriendRequest } from '../../services/Services'
 import userPic from '../../assets/user.jpg' // default
 import pfp1 from '../../assets/1.png' // avatar
 import pfp2 from '../../assets/2.png' // avatar
@@ -36,8 +36,17 @@ const Chats: React.FC = () => {
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
 
   useEffect(() => {
-    const storedFriends = JSON.parse(localStorage.getItem('friends') || '[]');
-    setFriends(storedFriends);
+    const fetchFriends = async () => {
+      const data = await getFriends();
+      if (data.friends) {
+        setFriends(data.friends);
+        localStorage.setItem('friends', JSON.stringify(data.friends));
+      } else {
+        console.error('Failed to fetch friends');
+      }
+    };
+
+    fetchFriends();
   }, []);
 
   const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>) => {
