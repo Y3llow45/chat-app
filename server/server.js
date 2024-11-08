@@ -157,6 +157,16 @@ app.get('/api/getUserRole', verifyToken, async (req, res) => {
   }
 })
 
+app.get('/api/getFriends', verifyToken, async (req, res) => {
+  try {
+    const username = req.username
+    const user = await User.findOne({ username })
+    res.status(200).json({ friends: user._doc.friends })
+  } catch (error) {
+    res.status(401).json({ message: 'server error' })
+  }
+})
+
 app.get('/clear', async (req, res) => {
   try {
     const username = 'bobi'

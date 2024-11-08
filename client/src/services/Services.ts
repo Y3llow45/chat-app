@@ -2,18 +2,22 @@ import { displayInfo } from '../components/Notify/Notify';
 const url = 'http://localhost:5242/';
 
 const fetchWithAuth = (endpoint: string, options: RequestInit = {}) => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': token,
-    ...(options.headers || {}),
-  };
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+      ...(options.headers || {}),
+    };
 
-  return fetch(`${url}${endpoint}`, { ...options, headers })
-    .then(res => res.json())
-    .catch(error => console.log(error));
+    return fetch(`${url}${endpoint}`, { ...options, headers })
+      .then(res => res.json())
+      .catch(error => console.log(error));
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 export const updatePfp = (index: number) => {
@@ -24,6 +28,10 @@ export const updatePfp = (index: number) => {
 
 export const getRole = () => {
   return fetchWithAuth('api/getUserRole');
+};
+
+export const getFriends = () => {
+  return fetchWithAuth('api/getFriends');
 };
 
 export const searchUsers = (username: string) => {
