@@ -61,10 +61,10 @@ const Chats: React.FC = () => {
     }
   }
 
-  const handleAddFriend = (username: string) => {
+  /*const handleAddFriend = (username: string) => {
     sendFriendRequest(username).then((response) => {
       console.log(response)
-      if (response.message === 'Friend request sent') {
+      if (response && response.message === 'Friend request sent') {
         setSearchQuery('')
         setSearchResults([])
         displaySuccess('Friend request sent')
@@ -74,6 +74,20 @@ const Chats: React.FC = () => {
         displayError('User not found or server error')
       }
     })
+  }*/
+
+  const handleAddFriend = async (username: string) => {
+    const data = await sendFriendRequest(username)
+    console.log(`data: ${data} and message: ${data.message}`)
+    if (data.message === "Friend request sent") {
+      setSearchQuery('')
+      setSearchResults([])
+      displaySuccess('Friend request sent')
+    } else if (data.message === 'Already friends or request pending') {
+      displayInfo('Already friends or request pending')
+    } else {
+      displayError('User not found or server error')
+    }
   }
 
   const handleSendMessage = () => {
