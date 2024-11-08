@@ -1,5 +1,5 @@
 import './Chats.css'
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from 'react'
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify'
 import { searchUsers, sendFriendRequest } from '../../services/Services'
 import userPic from '../../assets/user.jpg' // default
@@ -7,8 +7,6 @@ import pfp1 from '../../assets/1.png' // avatar
 import pfp2 from '../../assets/2.png' // avatar
 import pfp3 from '../../assets/3.png' // avatar
 import pfp4 from '../../assets/4.png' // avatar
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
 
 interface Friend {
   id: number;
@@ -28,15 +26,19 @@ interface User {
 }
 
 const Chats: React.FC = () => {
+  const [friends, setFriends] = useState<Friend[]>([]);
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
-  const [participants, setParticipants] = useState<string[]>(['Me', 'Friend1']);
+  const [participants, setParticipants] = useState<string[]>(['', '']);
   const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
-
-  const friends = useSelector((state: RootState) => state.friends.friends);
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
+
+  useEffect(() => {
+    const storedFriends = JSON.parse(localStorage.getItem('friends') || '[]');
+    setFriends(storedFriends);
+  }, []);
 
   const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value
@@ -134,18 +136,19 @@ const Chats: React.FC = () => {
           </button>
         </div>
       </div>
-
-      <div className='participants-container'>
-        <h4>Participants</h4>
-        <ul>
-          {participants.map((participant, index) => (
-            <li key={index} className='participant-item'>
-              <img src={selectedChat?.pfp || 'default-pfp.jpg'} alt='Profile' className='participant-pfp' />
-              {participant}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {selectedChat !== null ?
+        <div className='participants-container'>
+          <h4>Participants</h4>
+          <ul>
+            {participants.map((participant, index) => (
+              <li key={index} className='participant-item'>
+                <img src={selectedChat?.pfp || 'default-pfp.jpg'} alt='Profile' className='participant-pfp' />
+                {participant}
+              </li>
+            ))}
+          </ul>
+        </div>
+        : null}
     </div>
   )
 }

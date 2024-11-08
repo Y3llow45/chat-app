@@ -1,9 +1,6 @@
 import { withUsernameAuth } from '../../contexts/UsernameContext';
 import { acceptFriendRequest, clear } from '../../services/Services';
 import { useNotification } from '../../contexts/NotificationContext';
-import { useDispatch } from 'react-redux';
-import { addFriend } from '../../store/friendsSlice';
-import userPic from '../../assets/user.jpg';  //default avatar
 
 interface HeaderProps {
   setUsername: (username: string) => void;
@@ -13,10 +10,10 @@ interface HeaderProps {
 
 const Notifications: React.FC<HeaderProps> = () => {
   const { notifications, removeNotification } = useNotification();
-  const dispatch = useDispatch();
 
   const acceptFriend = (username: string, id: string) => {
-    dispatch(addFriend({ id: Date.now(), username, pfp: userPic }));
+    const updatedFriends = [...JSON.parse(localStorage.getItem('friends') || '[]'), username];
+    localStorage.setItem('friends', JSON.stringify(updatedFriends));
     removeNotification(id);
     acceptFriendRequest(username)
   };

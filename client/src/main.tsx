@@ -7,8 +7,6 @@ import { UsernameProvider } from './contexts/UsernameContext.js';
 import { RoleProvider } from './contexts/RoleContext.js'
 import { PfpProvider } from './contexts/PfpContext.js'
 import { NotificationProvider } from './contexts/NotificationContext.js'
-import { Provider } from 'react-redux'
-import { store } from './store/index.js'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,9 +15,7 @@ createRoot(document.getElementById('root')!).render(
         <RoleProvider>
           <PfpProvider>
             <NotificationProvider>
-              <Provider store={store}>
-                <App />
-              </Provider>
+              <App />
             </NotificationProvider>
           </PfpProvider>
         </RoleProvider>
