@@ -11,7 +11,7 @@ interface FriendsState {
 }
 
 const initialState: FriendsState = {
-  friends: [],
+  friends: JSON.parse(localStorage.getItem('friends') || '[]'),
 };
 
 const friendsSlice = createSlice({
@@ -23,6 +23,7 @@ const friendsSlice = createSlice({
     },
     addFriend: (state, action: PayloadAction<Friend>) => {
       state.friends.push(action.payload);
+      localStorage.setItem('friends', JSON.stringify(state.friends))
     },
   },
 });
