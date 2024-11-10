@@ -30,13 +30,20 @@ io.on('connection', (socket) => {
     if (userSocketMap.get(username) === socket.id) return;
     userSocketMap.set(username, socket.id);
     const missedMessages = await checkRabbitMQForUser(username);
-    console.log(`${username} has missed messages: ${missedMessages} and ${missedMessages.length}`)
+
     if (missedMessages && missedMessages.length > 0) {
       missedMessages.forEach((obj) => {
-        socket.emit('friendRequestNotification', {
-          from: obj.requesterUsername,
-          message: `${obj.requesterUsername} sent you a friend request.`
-        });
+        if (obj.type === 'friendRequest') {
+          socket.emit('friendRequestNotification', {
+            from: obj.requesterUsername,
+            message: `${obj.requesterUsername} sent you a friend request.`
+          });
+        } else { // no need for sg.type === 'friendRequestAccepted'
+          socket.emit('friendRequestAcceptedNotification', {
+            from: obj.friendUsername,
+            message: `${obj.friendUsername} accepted your friend request.`,
+          });
+        }
       });
     }
   })
@@ -49,11 +56,12 @@ const startRabbitMQConsumer = async () => {
 
     channel.consume('friendRequests', async (msg) => {
       const { requesterUsername, friendUsername, accepted } = JSON.parse(msg.content.toString());
-      const friendSocketId = userSocketMap.get(accepted ? requesterUsername : friendUsername);
+      const targetUsername = accepted ? requesterUsername : friendUsername
+      const friendSocketId = userSocketMap.get(targetUsername);
       const friendSocket = io.sockets.sockets.get(friendSocketId);
 
       if (!friendSocketId || !friendSocket) {
-        const missedQueueName = `missedMessages_${accepted ? requesterUsername : friendUsername}`;
+        const missedQueueName = `missedMessages_${targetUsername}`;
         await channel.assertQueue(missedQueueName, { durable: true });
         channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
 

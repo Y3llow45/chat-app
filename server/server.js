@@ -122,7 +122,7 @@ app.post('/friendRequest', verifyToken, async (req, res) => {
   await friend.save()
 
   console.log(`Published friend request from ${requesterUsername} to ${friendUsername}`);
-  await publishToQueue('friendRequests', { requesterUsername, friendUsername });
+  await publishToQueue('friendRequests', { requesterUsername, friendUsername, type: 'friendRequest' });
 
   res.json({ message: 'Friend request sent' })
 })
@@ -141,7 +141,7 @@ app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
     await friend.save()
     await requester.save()
 
-    await publishToQueue('friendRequests', { requesterUsername, friendUsername, accepted: true });
+    await publishToQueue('friendRequests', { requesterUsername, friendUsername, type: 'friendRequestAccepted', accepted: true });
 
     res.json({ message: 'Friend request accepted' })
   } catch (error) {

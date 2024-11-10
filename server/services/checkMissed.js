@@ -15,7 +15,8 @@ const checkRabbitMQForUser = async (username) => {
     let msg;
 
     while ((msg = await channel.get(queueName))) {
-      messages.push(JSON.parse(msg.content.toString()));
+      const parsedMsg = JSON.parse(msg.content.toString());
+      messages.push(parsedMsg);
       channel.ack(msg);
     }
 
