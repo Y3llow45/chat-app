@@ -61,12 +61,17 @@ const Header: React.FC<HeaderProps> = (props) => {
       setHasNotification(true);
     };
 
-    socket.off('friendRequestNotification');
+    const acceptFriendRequestNotification = (notification: { from: string; }) => {
+      displaySuccess(`${notification.from} accepted your friend request`);
+      setHasNotification(true)
+    };
 
     socket.on('friendRequestNotification', handleFriendRequestNotification);
+    socket.on('friendRequestAcceptedNotification', acceptFriendRequestNotification)
 
     return () => {
       socket.off('friendRequestNotification', handleFriendRequestNotification);
+      socket.off('friendRequestAcceptedNotification', acceptFriendRequestNotification)
     };
   }, [username]);
 
