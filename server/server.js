@@ -141,6 +141,8 @@ app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
     await friend.save()
     await requester.save()
 
+    await publishToQueue('friendRequests', { requesterUsername, friendUsername, accepted: true });
+
     res.json({ message: 'Friend request accepted' })
   } catch (error) {
     console.log(error)

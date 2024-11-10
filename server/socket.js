@@ -48,12 +48,12 @@ const startRabbitMQConsumer = async () => {
     await channel.assertQueue('friendRequests');
 
     channel.consume('friendRequests', async (msg) => {
-      const { requesterUsername, friendUsername } = JSON.parse(msg.content.toString());
-      const friendSocketId = userSocketMap.get(friendUsername);
+      const { requesterUsername, friendUsername, accepted } = JSON.parse(msg.content.toString());
+      const friendSocketId = userSocketMap.get(accepted ? requesterUsername : friendUsername);
       const friendSocket = io.sockets.sockets.get(friendSocketId);
 
       if (!friendSocketId || !friendSocket) {
-        const missedQueueName = `missedMessages_${friendUsername}`;
+        const missedQueueName = `missedMessages_${accepted ? requesterUsername : friendUsername}`;
         await channel.assertQueue(missedQueueName, { durable: true });
         channel.sendToQueue(missedQueueName, Buffer.from(msg.content.toString()));
 
@@ -61,10 +61,17 @@ const startRabbitMQConsumer = async () => {
         return;
       }
 
-      friendSocket.emit('friendRequestNotification', {
-        from: requesterUsername,
-        message: `${requesterUsername} sent you a friend request.`
-      });
+      if (accepted) {
+        friendSocket.emit('friendRequestAcceptedNotification', {
+          from: friendUsername,
+          message: `${friendUsername} accepted your friend request.`
+        });
+      } else {
+        friendSocket.emit('friendRequestNotification', {
+          from: requesterUsername,
+          message: `${requesterUsername} sent you a friend request.`
+        });
+      }
 
       channel.ack(msg);
     });
