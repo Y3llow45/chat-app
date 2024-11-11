@@ -5,9 +5,15 @@ const RABBITMQ_URI = process.env.RABBITMQ_URI
 let channel;
 
 const connectRabbitMQ = async () => {
-  const connection = await amqp.connect(RABBITMQ_URI);
-  channel = await connection.createChannel();
-  return channel
+  if (channel) return channel;
+  try {
+    const connection = await amqp.connect(RABBITMQ_URI);
+    channel = await connection.createChannel();
+    return channel;
+  } catch (error) {
+    console.error('Failed to connect to RabbitMQ:', error);
+    setTimeout(connectRabbitMQ, 5000); // Retry connection after delay
+  }
 };
 
 const publishToQueue = async (queueName, message) => {
