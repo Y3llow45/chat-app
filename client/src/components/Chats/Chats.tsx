@@ -28,20 +28,18 @@ interface User {
 }
 
 interface ChatsProps {
-  setUsername: (username: string) => void;
   username: string;
 }
 
 const Chats: React.FC<ChatsProps> = (props) => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [participants, setParticipants] = useState<string[]>(['', '']);
+  const [chatHistory, setChatHistory] = useState<{ [key: string]: Message[] }>({});
   const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
-  const { setUsername, username } = props;
+  const { username } = props;
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -56,8 +54,11 @@ const Chats: React.FC<ChatsProps> = (props) => {
 
     fetchFriends();
 
-    socket.on('receiveMessage', ({ from, message }) => {
-      setMessages((messages) => [...messages, message]);
+    socket.on('receiveMessage', ({ from, content }) => {
+      setChatHistory((prevChats) => ({
+        ...prevChats,
+        [from]: [...(prevChats[from] || []), { from, content }],
+      }));
     });
 
     return () => {
@@ -91,17 +92,21 @@ const Chats: React.FC<ChatsProps> = (props) => {
   }
 
   const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const message = newMessage.trim();
-      setMessages((messages) => [...messages, message]);
-      socket.emit('sendMessage', { from: username, to: participants[1], message });
+    if (newMessage.trim() && selectedChat) {
+      const message: Message = { from: username, content: newMessage.trim() }
+
+      setChatHistory((prevChats) => ({
+        ...prevChats,
+        [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
+      }));
+
+      socket.emit('sendMessage', { from: username, to: selectedChat.username, message: newMessage.trim() });
       setNewMessage('');
     }
   };
 
   const selectChat = (friend: Friend) => {
-    setSelectedChat(friend)
-    setParticipants(['Me', friend.username])
+    setSelectedChat(friend);
   }
 
   return (
@@ -141,39 +146,32 @@ const Chats: React.FC<ChatsProps> = (props) => {
       </div>
 
       <div className='chat-container'>
-        <div className='messages-container'>
-          {messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.from === 'Me' ? 'my-message' : 'friend-message'}`}>
-              <p>{msg.content}</p>
+        {selectedChat ? (
+          <>
+            <div className='messages-container'>
+              {(chatHistory[selectedChat.username] || []).map((msg, index) => (
+                <div key={index} className={`message ${msg.from === username ? 'my-message' : 'friend-message'}`}>
+                  <p>{msg.content}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className='input-container'>
-          <input
-            type='text'
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            className='input-message'
-            placeholder='Type a message...'
-          />
-          <button onClick={handleSendMessage} className='send-btn'>
-            📨
-          </button>
-        </div>
+            <div className='input-container'>
+              <input
+                type='text'
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                className='input-message'
+                placeholder='Type a message...'
+              />
+              <button onClick={handleSendMessage} className='send-btn'>
+                📨
+              </button>
+            </div>
+          </>
+        ) : (
+          <p>Select a chat to start messaging.</p>
+        )}
       </div>
-      {selectedChat !== null ?
-        <div className='participants-container'>
-          <h4>Participants</h4>
-          <ul>
-            {participants.map((participant, index) => (
-              <li key={index} className='participant-item'>
-                <img src={selectedChat?.pfp || 'default-pfp.jpg'} alt='Profile' className='participant-pfp' />
-                {participant}
-              </li>
-            ))}
-          </ul>
-        </div>
-        : null}
     </div>
   )
 }
