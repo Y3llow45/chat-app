@@ -54,10 +54,11 @@ const Chats: React.FC<ChatsProps> = (props) => {
 
     fetchFriends();
 
-    socket.on('receiveMessage', ({ from, content }) => {
+    socket.on('receiveMessage', ({ from, to, message }) => {
+      console.log(`${from}, ${to}, ${message}`)
       setChatHistory((prevChats) => ({
         ...prevChats,
-        [from]: [...(prevChats[from] || []), { from, content }],
+        [from]: [...(prevChats[from] || []), { from, message }],
       }));
     });
 
@@ -65,6 +66,19 @@ const Chats: React.FC<ChatsProps> = (props) => {
       socket.off('receiveMessage');
     };
   }, []);
+
+  const handleSendMessage = () => {
+    if (newMessage.trim() && selectedChat) {
+      const message: Message = { from: username, content: newMessage.trim() }
+
+      setChatHistory((prevChats) => ({
+        ...prevChats,
+        [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
+      }));
+      socket.emit('sendMessage', { from: username, to: selectedChat.username, message: newMessage.trim() });
+      setNewMessage('');
+    }
+  };
 
   const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value
@@ -90,20 +104,6 @@ const Chats: React.FC<ChatsProps> = (props) => {
       displayError('User not found or server error')
     }
   }
-
-  const handleSendMessage = () => {
-    if (newMessage.trim() && selectedChat) {
-      const message: Message = { from: username, content: newMessage.trim() }
-
-      setChatHistory((prevChats) => ({
-        ...prevChats,
-        [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
-      }));
-
-      socket.emit('sendMessage', { from: username, to: selectedChat.username, message: newMessage.trim() });
-      setNewMessage('');
-    }
-  };
 
   const selectChat = (friend: Friend) => {
     setSelectedChat(friend);
