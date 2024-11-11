@@ -7,6 +7,8 @@ import pfp1 from '../../assets/1.png' // avatar
 import pfp2 from '../../assets/2.png' // avatar
 import pfp3 from '../../assets/3.png' // avatar
 import pfp4 from '../../assets/4.png' // avatar
+import socket from '../../services/socket'
+import { withUsernameAuth } from '../../contexts/UsernameContext'
 
 interface Friend {
   id: number;
@@ -25,15 +27,21 @@ interface User {
   profilePic: number;
 }
 
-const Chats: React.FC = () => {
+interface ChatsProps {
+  setUsername: (username: string) => void;
+  username: string;
+}
+
+const Chats: React.FC<ChatsProps> = (props) => {
   const [friends, setFriends] = useState<Friend[]>([]);
-  const [message, setMessage] = useState<string>('');
+  const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [participants, setParticipants] = useState<string[]>(['', '']);
   const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
+  const { setUsername, username } = props;
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -47,6 +55,14 @@ const Chats: React.FC = () => {
     };
 
     fetchFriends();
+
+    socket.on('receiveMessage', ({ from, message }) => {
+      setMessages((messages) => [...messages, message]);
+    });
+
+    return () => {
+      socket.off('receiveMessage');
+    };
   }, []);
 
   const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +79,6 @@ const Chats: React.FC = () => {
 
   const handleAddFriend = async (username: string) => {
     const data = await sendFriendRequest(username)
-    console.log(`data: ${data} and message: ${data.message}`)
     if (data.message === "Friend request sent") {
       setSearchQuery('')
       setSearchResults([])
@@ -76,11 +91,13 @@ const Chats: React.FC = () => {
   }
 
   const handleSendMessage = () => {
-    if (message.trim() !== '') {
-      setMessages([...messages, { from: 'Me', content: message }])
-      setMessage('')
+    if (newMessage.trim()) {
+      const message = newMessage.trim();
+      setMessages((messages) => [...messages, message]);
+      socket.emit('sendMessage', { from: username, to: participants[1], message });
+      setNewMessage('');
     }
-  }
+  };
 
   const selectChat = (friend: Friend) => {
     setSelectedChat(friend)
@@ -134,8 +151,8 @@ const Chats: React.FC = () => {
         <div className='input-container'>
           <input
             type='text'
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
             className='input-message'
             placeholder='Type a message...'
           />
@@ -161,4 +178,4 @@ const Chats: React.FC = () => {
   )
 }
 
-export default Chats
+export default withUsernameAuth(Chats)
