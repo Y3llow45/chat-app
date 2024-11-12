@@ -19,7 +19,6 @@ io = socket(server, {
 
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
-    console.log(`${socket} left`)
     userSocketMap.forEach((id, username) => {
       if (id === socket.id) {
         userSocketMap.delete(username);
@@ -52,17 +51,11 @@ io.on('connection', (socket) => {
   })
 
   socket.on('sendMessage', async (data) => {
-    console.log('sendMessage socket connection')
     const { from, to, content } = data;
-    console.log(to)
-    console.log('content' + content)
-    console.log(`user socket map get ${userSocketMap.get(to)}`)
     const recipientSocketId = userSocketMap.get(to);
-    console.log(recipientSocketId)
     const message = { type: "message", from, to, content };
 
     if (recipientSocketId) {
-      console.log(`online so send, ${message.content}`)
       io.to(recipientSocketId).emit('receiveMessage', message);
     } else {
       const missedQueueName = `missedMessages_${to}`;

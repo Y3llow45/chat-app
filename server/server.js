@@ -84,7 +84,7 @@ app.put('/updatePfp/:index', verifyToken, async (req, res) => {
     await user.save()
     res.json({ message: 'Pfp updated' })
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(500).json({ message: 'Server error' })
   }
 })
@@ -121,7 +121,6 @@ app.post('/friendRequest', verifyToken, async (req, res) => {
   friend.pendingRequests.push(requesterUsername)
   await friend.save()
 
-  console.log(`Published friend request from ${requesterUsername} to ${friendUsername}`);
   await publishToQueue('friendRequests', { requesterUsername, friendUsername, type: 'friendRequest' });
 
   res.json({ message: 'Friend request sent' })
@@ -145,7 +144,7 @@ app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
 
     res.json({ message: 'Friend request accepted' })
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 })
 
@@ -209,5 +208,3 @@ app.get('/check/:type/:input', async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
-
-

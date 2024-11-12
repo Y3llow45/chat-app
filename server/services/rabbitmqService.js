@@ -20,9 +20,7 @@ const publishToQueue = async (queueName, message) => {
   if (!channel) throw new Error('No RabbitMQ channel found');
   await channel.assertQueue(queueName, { durable: true });
   const sent = channel.sendToQueue(queueName, Buffer.from(JSON.stringify({ ...message, type: 'message' })));
-  if (sent) {
-    console.log(`Message successfully sent to queue ${queueName}`);
-  } else {
+  if (!sent) {
     console.error(`Failed to send message to queue ${queueName}`);
   }
 };
