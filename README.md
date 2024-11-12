@@ -7,9 +7,9 @@
 ![Bcrypt badge](https://img.shields.io/badge/Bcrypt-5.1.1-blue)
 ![JWT badge](https://img.shields.io/badge/JWT-9.0.2-purple)
 ![Mongoose badge](https://img.shields.io/badge/mongoose-7.4.5-lightgreen)
-![PostgreSQL badge](https://img.shields.io/badge/PostgreSQL-15.8.0-orange)
-![Nodemon badge](https://img.shields.io/badge/Nodemon-3.1.4-blue)
-![framer-motion badge](https://img.shields.io/badge/framerMotion-11.5.4-red)
+![PostgreSQL badge](https://img.shields.io/badge/PostgreSQL-15.8.0-purple)
+![Nodemon badge](https://img.shields.io/badge/Nodemon-3.1.4-yellow)
+![framer-motion badge](https://img.shields.io/badge/framerMotion-11.5.4-brown)
 
 ## 🚀 Project Overview
 
