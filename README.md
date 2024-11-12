@@ -4,6 +4,7 @@
 ![Express badge](https://img.shields.io/badge/Express-4.19.2-green)
 ![amqplib badge](https://img.shields.io/badge/amqplib-0.10.4-purple)
 ![Socket badge](https://img.shields.io/badge/Socket-4.7.5-yellow)
+![Bcrypt badge](https://img.shields.io/badge/Bcrypt-5.1.1-blue)
 ![JWT badge](https://img.shields.io/badge/JWT-9.0.2-purple)
 ![Mongoose badge](https://img.shields.io/badge/mongoose-7.4.5-lightgreen)
 ![PostgreSQL badge](https://img.shields.io/badge/PostgreSQL-15.8.0-orange)
