@@ -1,4 +1,14 @@
 # 🗨️ Chat-App
+![Vite badge](https://img.shields.io/badge/Vite-5.4.10-orange)
+![Static Badge](https://img.shields.io/badge/React-18.2.0-blue)
+![Express badge](https://img.shields.io/badge/Express-4.19.2-green)
+![amqplib badge](https://img.shields.io/badge/amqplib-0.10.4-purple)
+![Socket badge](https://img.shields.io/badge/Socket-4.7.5-yellow)
+![JWT badge](https://img.shields.io/badge/JWT-9.0.2-purple)
+![Mongoose badge](https://img.shields.io/badge/mongoose-7.4.5-lightgreen)
+![PostgreSQL badge](https://img.shields.io/badge/PostgreSQL-15.8.0-orange)
+![Nodemon badge](https://img.shields.io/badge/Nodemon-3.1.4-blue)
+![framer-motion badge](https://img.shields.io/badge/framerMotion-11.5.4-red)
 
 ## 🚀 Project Overview
 
@@ -38,7 +48,7 @@ Testing:           Cypress and Postman <br>
     `SSKEY='secrete*'` <br>
     `RABBITMQ_URI=amqp://127.0.0.1:5672` <br>
 5. Run these commands
-   5.1 `git clone https://github.com/Y3llow45/chat-app`
-   5.2 `cd chat-app`
-   5.3 `npm install`
-   5.4 `npm start`
+   5.1 `git clone https://github.com/Y3llow45/chat-app` <br>
+   5.2 `cd chat-app` <br>
+   5.3 `npm install` <br>
+   5.4 `npm start` <br>
