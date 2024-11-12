@@ -39,11 +39,13 @@ io.on('connection', (socket) => {
             from: obj.requesterUsername,
             message: `${obj.requesterUsername} sent you a friend request.`
           });
-        } else {
+        } else if (obj.type === 'friendRequestAccepted') {
           socket.emit('friendRequestAcceptedNotification', {
             from: obj.friendUsername,
             message: `${obj.friendUsername} accepted your friend request.`,
           });
+        } else {
+          socket.emit('receiveMessage', { from: obj.from, content: obj.content });
         }
       });
     }
@@ -51,22 +53,22 @@ io.on('connection', (socket) => {
 
   socket.on('sendMessage', async (data) => {
     console.log('sendMessage socket connection')
-    const { from, to, message } = data;
+    const { from, to, content } = data;
     console.log(to)
-    console.log('message' + message)
+    console.log('content' + content)
     console.log(`user socket map get ${userSocketMap.get(to)}`)
     const recipientSocketId = userSocketMap.get(to);
     console.log(recipientSocketId)
-    const content = { from, to, message };
+    const message = { type: "message", from, to, content };
 
     if (recipientSocketId) {
-      console.log(`online so send, ${content.message}`)
-      io.to(recipientSocketId).emit('receiveMessage', content);
+      console.log(`online so send, ${message.content}`)
+      io.to(recipientSocketId).emit('receiveMessage', message);
     } else {
       const missedQueueName = `missedMessages_${to}`;
       const channel = await connectRabbitMQ();
       await channel.assertQueue(missedQueueName, { durable: true });
-      channel.sendToQueue(missedQueueName, Buffer.from(JSON.stringify(content)));
+      channel.sendToQueue(missedQueueName, Buffer.from(JSON.stringify(message)));
     }
   });
 })

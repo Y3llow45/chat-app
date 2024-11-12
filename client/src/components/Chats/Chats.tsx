@@ -54,11 +54,10 @@ const Chats: React.FC<ChatsProps> = (props) => {
 
     fetchFriends();
 
-    socket.on('receiveMessage', ({ from, to, message }) => {
-      console.log(`${from}, ${to}, ${message}`)
+    socket.on('receiveMessage', ({ from, content }) => {
       setChatHistory((prevChats) => ({
         ...prevChats,
-        [from]: [...(prevChats[from] || []), { from, message }],
+        [from]: [...(prevChats[from] || []), { from, content }],
       }));
     });
 
@@ -75,7 +74,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
         ...prevChats,
         [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
       }));
-      socket.emit('sendMessage', { from: username, to: selectedChat.username, message: newMessage.trim() });
+      socket.emit('sendMessage', { from: username, to: selectedChat.username, content: newMessage.trim() });
       setNewMessage('');
     }
   };
@@ -123,10 +122,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
           {searchResults.length > 0 && (
             <div className='search-dropdown'>
               {searchResults.map((user) => (
-                <div
-                  key={user._id}
-                  className='search-result-item'
-                >
+                <div key={user._id} className='search-result-item'>
                   <img src={images[user.profilePic]} alt='Profile' className='search-pfp' />
                   <span>{user.username}</span>
                   <button className='add-friend-btn' onClick={() => handleAddFriend(user.username)}>Add</button>
