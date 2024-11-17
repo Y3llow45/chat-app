@@ -1,7 +1,7 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const cors = require('cors')
 require('dotenv').config()
+const express = require('express')
+const { Pool } = require('pg');
+const cors = require('cors')
 const bcrypt = require('bcrypt')
 const generateToken = require('./services/genToken')
 const bodyParser = require('body-parser')
@@ -13,23 +13,32 @@ const { publishToQueue, connectRabbitMQ } = require('./services/rabbitmqService'
 const app = express()
 const PORT = parseInt(process.env.PORT, 10)
 const saltRounds = parseInt(process.env.saltRounds, 10)
-const AtlasUri = process.env.ATLASURI
+const password = process.env.ATLASURI
+const pool = new Pool({
+  user: 'posgres',
+  host: 'localhost',
+  database: 'postgres',
+  password: password,
+  port: 5432,
+});
+
+pool.connect()
+  .then(() => {
+    console.log('Connected to PostgreSQL');
+    return connectRabbitMQ();
+  })
+  .then(() => {
+    console.log('Connected to RabbitMQ');
+    app.listen(PORT, () => {
+      console.log(`Server is listening on port: ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Error starting server: ', err);
+  });
 
 app.use(cors())
 app.use(bodyParser.json())
-
-mongoose.connect(AtlasUri).then(() => {
-  console.log('Connected to db')
-  return connectRabbitMQ()
-}).then(() => {
-  console.log('Connected to RabbitMQ')
-
-  app.listen(PORT, () => {
-    console.log(`Server is listening on port: ${PORT}`)
-  })
-}).catch((err) => {
-  console.error('Error starting server: ', err)
-})
 
 app.post('/signup', async (req, res) => {
   try {
