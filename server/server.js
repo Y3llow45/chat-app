@@ -13,9 +13,10 @@ const { publishToQueue, connectRabbitMQ } = require('./services/rabbitmqService'
 const app = express()
 const PORT = parseInt(process.env.PORT, 10)
 const saltRounds = parseInt(process.env.saltRounds, 10)
-const password = process.env.ATLASURI
+const password = process.env.password
+console.log(password)
 const pool = new Pool({
-  user: 'posgres',
+  user: 'postgres',
   host: 'localhost',
   database: 'postgres',
   password: password,
