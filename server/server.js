@@ -44,17 +44,15 @@ app.use(bodyParser.json())
 app.post('/signup', async (req, res) => {
   try {
     const { username, email, password } = req.body
-    const testUsername = await User.find({ username })
-    if (testUsername.length > 0) {
+    const existingUser = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    if (existingUser.length > 0) {
       return res.status(400).json({ message: 'Username already exists' })
     }
-    bcrypt
-      .hash(password, saltRounds)
-      .then(hash => {
-        const newUser = new User({ username, email, password: hash, role: 'user' })
-        newUser.save()
-      })
-      .catch((err) => { throw err })
+    const hash = await bcrypt.hash(password, saltRounds);
+    await pool.query(
+      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4)',
+      [username, email, hash, 'user']
+    );
   } catch (error) {
     res.statusMessage = `${error}`
     return res.status(500).send()
@@ -65,18 +63,19 @@ app.post('/signup', async (req, res) => {
 app.post('/signin', async (req, res) => {
   const { username, password } = req.body
   try {
-    const user = await User.findOne({ username })
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' })
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const userResult = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    const user = userResult.rows[0];
 
-    if (!isPasswordValid) {
-      res.status(401).json({ error: 'Invalid credentials' })
-      return
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = generateToken(user._id, user.username, user.role)
-    res.status(200).json({ message: 'Sign in successful', token, username: user.username })
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = generateToken(user.id, user.username, user.role);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' })
   }
@@ -86,12 +85,14 @@ app.put('/updatePfp/:index', verifyToken, async (req, res) => {
   try {
     const index = req.params.index
     const username = req.username
-    const user = await User.findOne({ username })
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' })
+    const result = await pool.query(
+      'UPDATE users SET profile_pic = $1, updated_at = NOW() WHERE username = $2 RETURNING *',
+      [index, username]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    user.profilePic = index
-    await user.save()
     res.json({ message: 'Pfp updated' })
   } catch (error) {
     console.error(error)
