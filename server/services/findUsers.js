@@ -1,5 +1,3 @@
-const User = require('../models/User')
-
 const findUsers = async (friendUsername, requesterUsername) => {
   try {
     const friend = await User.findOne({ username: friendUsername })

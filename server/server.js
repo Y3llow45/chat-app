@@ -5,7 +5,6 @@ const cors = require('cors')
 const bcrypt = require('bcrypt')
 const generateToken = require('./services/genToken')
 const bodyParser = require('body-parser')
-const User = require('./models/User')
 const verifyToken = require('./middleware/verifyToken')
 const findUsers = require('./services/findUsers')
 const { publishToQueue, connectRabbitMQ } = require('./services/rabbitmqService');
@@ -14,7 +13,6 @@ const app = express()
 const PORT = parseInt(process.env.PORT, 10)
 const saltRounds = parseInt(process.env.saltRounds, 10)
 const password = process.env.password
-console.log(password)
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
@@ -53,11 +51,11 @@ app.post('/signup', async (req, res) => {
       'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4)',
       [username, email, hash, 'user']
     );
+    res.status(201).json({ message: 'Account created' })
   } catch (error) {
-    res.statusMessage = `${error}`
-    return res.status(500).send()
+    console.error(error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-  res.status(201).json({ message: 'Account created' })
 })
 
 app.post('/signin', async (req, res) => {
@@ -74,9 +72,10 @@ app.post('/signin', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
     const token = generateToken(user.id, user.username, user.role);
+    res.status(200).json({ message: 'Sign in successful', token, username: user.username })
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
 })
