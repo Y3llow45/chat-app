@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt')
 const generateToken = require('./services/genToken')
 const bodyParser = require('body-parser')
 const verifyToken = require('./middleware/verifyToken')
-const findUsers = require('./services/findUsers')
 const { publishToQueue, connectRabbitMQ } = require('./services/rabbitmqService');
 
 const app = express()
@@ -222,10 +221,12 @@ app.get('/api/getFriends', verifyToken, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const friends = user.friends.map((friendUsername, index) => ({
-      id: index,
-      username: friendUsername,
-    }));
+    const friends = Array.isArray(user.friends)
+      ? user.friends.map((friendUsername, index) => ({
+        id: index,
+        username: friendUsername,
+      }))
+      : [];
 
     res.status(200).json({ friends });
   } catch (error) {
