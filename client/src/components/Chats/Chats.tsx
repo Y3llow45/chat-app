@@ -47,8 +47,6 @@ const Chats: React.FC<ChatsProps> = (props) => {
       if (data.friends) {
         setFriends(data.friends);
         localStorage.setItem('friends', JSON.stringify(data.friends));
-      } else {
-        console.error('Failed to fetch friends');
       }
     };
 
@@ -121,8 +119,8 @@ const Chats: React.FC<ChatsProps> = (props) => {
           />
           {searchResults.length > 0 && (
             <div className='search-dropdown'>
-              {searchResults.map((user) => (
-                <div key={user._id} className='search-result-item'>
+              {searchResults.map((user, index) => (
+                <div key={user._id || index} className='search-result-item'>
                   <img src={images[user.profilePic]} alt='Profile' className='search-pfp' />
                   <span>{user.username}</span>
                   <button className='add-friend-btn' onClick={() => handleAddFriend(user.username)}>Add</button>
