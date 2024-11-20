@@ -157,19 +157,39 @@ app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
     const { requesterUsername } = req.body
     const friendUsername = req.username
 
-    const { friend, requester, error, status } = await findUsers(friendUsername, requesterUsername);
-    if (error) return res.status(status).json({ message: error });
+    const query = `
+      SELECT username, friends, pending_requests 
+      FROM users 
+      WHERE username = $1 OR username = $2
+    `;
+    const { rows } = await pool.query(query, [friendUsername, requesterUsername]);
 
-    friend.pendingRequests = friend.pendingRequests.filter(req => req !== requesterUsername)
-    friend.friends.push(requesterUsername)
-    requester.friends.push(friendUsername)
-    await friend.save()
-    await requester.save()
+    const friend = rows.find(user => user.username === friendUsername);
+    const requester = rows.find(user => user.username === requesterUsername);
+
+    if (!friend || !requester) {
+      return res.status(404).json({ message: 'Users not found' });
+    }
+
+    const friendUpdateQuery = `
+      UPDATE users 
+      SET friends = array_append(friends, $1), 
+        pending_requests = array_remove(pending_requests, $2)
+      WHERE username = $3
+    `;
+    const requesterUpdateQuery = `
+      UPDATE users 
+      SET friends = array_append(friends, $1) 
+      WHERE username = $2
+    `;
+    await pool.query(friendUpdateQuery, [requesterUsername, requesterUsername, friendUsername]);
+    await pool.query(requesterUpdateQuery, [friendUsername, requesterUsername]);
 
     await publishToQueue('friendRequests', { requesterUsername, friendUsername, type: 'friendRequestAccepted', accepted: true });
 
     res.json({ message: 'Friend request accepted' })
   } catch (error) {
+    res.status(500).json({ message: 'Server error' })
     console.error(error)
   }
 })
@@ -177,60 +197,85 @@ app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
 app.get('/api/getUserRole', verifyToken, async (req, res) => {
   try {
     const username = req.username
-    const user = await User.findOne({ username })
-    res.status(200).json({ role: user._doc.role })
+    const query = 'SELECT role FROM users WHERE username = $1';
+    const { rows: [user] } = await pool.query(query, [username]);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ role: user.role })
   } catch (error) {
-    res.status(401).json({ message: 'server error' })
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
 })
 
 app.get('/api/getFriends', verifyToken, async (req, res) => {
   try {
     const username = req.username
-    const user = await User.findOne({ username })
+
+    const query = 'SELECT friends FROM users WHERE username = $1';
+    const { rows: [user] } = await pool.query(query, [username]);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     const friends = user.friends.map((friendUsername, index) => ({
       id: index,
       username: friendUsername,
     }));
+
     res.status(200).json({ friends });
   } catch (error) {
-    res.status(401).json({ message: 'server error' })
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
 })
 
 app.get('/clear', async (req, res) => {
   try {
-    const username = 'bobi'
-    const second_username = 'test'
-    const user = await User.findOne({ username })
-    const second_user = await User.findOne({ username: second_username })
-    user.pendingRequests = []
-    second_user.pendingRequests = []
-    user.friends = []
-    second_user.friends = []
-    await user.save()
-    await second_user.save()
+    const username = 'bobi';
+    const secondUsername = 'test';
+
+    const clearUserDataQuery = `
+      UPDATE users 
+      SET pending_requests = '{}', friends = '{}' 
+      WHERE username = $1
+    `;
+
+    await pool.query(clearUserDataQuery, [username]);
+    await pool.query(clearUserDataQuery, [secondUsername]);
+
+    res.status(200).json({ message: 'Data cleared successfully' });
   } catch (error) {
-    res.status(401).json({ message: 'server error' })
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
 })
 
 app.get('/check/:type/:input', async (req, res) => {
   try {
     const { type, input } = req.params
-    let user
+
+    let query;
     if (type === 'Username') {
-      user = await User.findOne({ username: input })
+      query = 'SELECT 1 FROM users WHERE username = $1';
     } else if (type === 'Email') {
-      user = await User.findOne({ email: input })
+      query = 'SELECT 1 FROM users WHERE email = $1';
     } else {
-      return res.status(404).json({ message: 'No such type' })
+      return res.status(404).json({ message: 'No such type' });
     }
-    if (!user) {
-      return res.status(200).json({ message: 'false' })
+
+    const { rows } = await pool.query(query, [input]);
+
+    if (rows.length === 0) {
+      return res.status(200).json({ message: 'false' });
     }
-    return res.status(200).json({ message: 'true' })
+    res.status(200).json({ message: 'true' })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
 })
