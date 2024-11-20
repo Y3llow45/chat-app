@@ -106,9 +106,12 @@ app.get('/searchUsers/:username', verifyToken, async (req, res) => {
     if (username.length < 4) {
       return res.status(400).json({ message: 'Search query too short' })
     }
-    const users = await User.find({
-      username: { $regex: `^${username}`, $options: 'i' }
-    }).select('username profilePic')
+    const query = `
+      SELECT username, profile_pic 
+      FROM users 
+      WHERE username ILIKE $1
+    `;
+    const { rows: users } = await pool.query(query, [`${username}%`]);
 
     res.json(users)
   } catch (error) {
@@ -118,22 +121,35 @@ app.get('/searchUsers/:username', verifyToken, async (req, res) => {
 })
 
 app.post('/friendRequest', verifyToken, async (req, res) => {
-  const { friendUsername } = req.body
-  const requesterUsername = req.username
+  try {
+    const { friendUsername } = req.body
+    const requesterUsername = req.username
 
-  const { friend, error, status } = await findUsers(friendUsername, requesterUsername)
-  if (error) return res.status(status).json({ message: error })
+    const query = 'SELECT username, friends, pending_requests FROM users WHERE username = $1';
+    const { rows: [friend] } = await pool.query(query, [friendUsername]);
 
-  if (friend.friends.includes(requesterUsername) || friend.pendingRequests.includes(requesterUsername)) {
-    return res.status(400).json({ message: 'Already friends or request pending' })
+    if (!friend) {
+      return res.status(404).json({ message: 'Friend not found' });
+    }
+
+    if (friend.friends.includes(requesterUsername) || friend.pending_requests.includes(requesterUsername)) {
+      return res.status(400).json({ message: 'Already friends or request pending' });
+    }
+
+    const updateQuery = `
+      UPDATE users 
+      SET pending_requests = array_append(pending_requests, $1) 
+      WHERE username = $2
+    `;
+    await pool.query(updateQuery, [requesterUsername, friendUsername]);
+
+    await publishToQueue('friendRequests', { requesterUsername, friendUsername, type: 'friendRequest' });
+
+    res.json({ message: 'Friend request sent' })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Server error' })
   }
-
-  friend.pendingRequests.push(requesterUsername)
-  await friend.save()
-
-  await publishToQueue('friendRequests', { requesterUsername, friendUsername, type: 'friendRequest' });
-
-  res.json({ message: 'Friend request sent' })
 })
 
 app.post('/acceptFriendRequest', verifyToken, async (req, res) => {
