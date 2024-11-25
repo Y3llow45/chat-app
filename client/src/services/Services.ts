@@ -61,6 +61,12 @@ export const acceptFriendRequest = (requesterUsername: string) => {
   });
 };
 
+export const getChatHistory = (requesterUsername: string) => {
+    return fetchWithAuth(`api/chatHistory/${requesterUsername}`, {
+      method: 'GET'
+    });
+  };
+
 export const signUp = (username: string, email: string, password: string) => {
   let user = {
     username,
