@@ -12,12 +12,14 @@ const app = express()
 const PORT = parseInt(process.env.PORT, 10)
 const saltRounds = parseInt(process.env.saltRounds, 10)
 
-connectRabbitMQ().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server is listening on port: ${PORT}`);
-      });
-}).catch((err) => {
-    console.error('Error starting server: ', err);
+connectRabbitMQ()
+    .then(() => {
+        console.log('Connected to RabbitMQ');
+        app.listen(PORT, () => {
+            console.log(`Server is listening on port: ${PORT}`);
+        });
+    }).catch((err) => {
+        console.error('Error starting server: ', err);
 });
 
 app.use(cors())
@@ -219,6 +221,27 @@ app.get('/api/getFriends', verifyToken, async (req, res) => {
     res.status(500).json({ message: 'Server error' })
   }
 })
+
+app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
+    const username = req.username;
+    const withUser = req.params.withUser;
+  
+    try {
+      const { rows: messages } = await pool.query(
+        `SELECT sender, content, timestamp 
+        FROM messages 
+        WHERE (sender = $1 AND receiver = $2) 
+            OR (sender = $2 AND receiver = $1)
+        ORDER BY timestamp`,
+        [username, withUser]
+      );
+  
+      res.status(200).json({ messages });
+    } catch (error) {
+      console.error('Error fetching chat history:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+});
 
 app.get('/clear', async (req, res) => {
   try {
