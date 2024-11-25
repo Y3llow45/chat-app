@@ -1,7 +1,7 @@
 import './Chats.css'
 import { useState, ChangeEvent, useEffect } from 'react'
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify'
-import { getFriends, searchUsers, sendFriendRequest } from '../../services/Services'
+import { getChatHistory, getFriends, searchUsers, sendFriendRequest } from '../../services/Services'
 import userPic from '../../assets/user.jpg' // default
 import pfp1 from '../../assets/1.png' // avatar
 import pfp2 from '../../assets/2.png' // avatar
@@ -102,8 +102,23 @@ const Chats: React.FC<ChatsProps> = (props) => {
     }
   }
 
-  const selectChat = (friend: Friend) => {
+  const selectChat = async (friend: Friend) => {
     setSelectedChat(friend);
+    try {
+        const data = await getChatHistory(friend.username)
+    
+        if (data.messages) {
+          setChatHistory((prevChats) => ({
+            ...prevChats,
+            [friend.username]: data.messages.map((msg:any) => ({
+              from: msg.sender,
+              content: msg.content,
+            })),
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading chat history:', error);
+      }
   }
 
   return (
