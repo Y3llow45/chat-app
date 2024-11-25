@@ -1,39 +1,24 @@
 require('dotenv').config()
 const express = require('express')
-const { Pool } = require('pg');
 const cors = require('cors')
 const bcrypt = require('bcrypt')
 const generateToken = require('./services/genToken')
 const bodyParser = require('body-parser')
 const verifyToken = require('./middleware/verifyToken')
 const { publishToQueue, connectRabbitMQ } = require('./services/rabbitmqService');
+const pool = require('./services/db');
 
 const app = express()
 const PORT = parseInt(process.env.PORT, 10)
 const saltRounds = parseInt(process.env.saltRounds, 10)
-const password = process.env.password
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: password,
-  port: 5432,
-});
 
-pool.connect()
-  .then(() => {
-    console.log('Connected to PostgreSQL');
-    return connectRabbitMQ();
-  })
-  .then(() => {
-    console.log('Connected to RabbitMQ');
+connectRabbitMQ().then(() => {
     app.listen(PORT, () => {
-      console.log(`Server is listening on port: ${PORT}`);
-    });
-  })
-  .catch((err) => {
+        console.log(`Server is listening on port: ${PORT}`);
+      });
+}).catch((err) => {
     console.error('Error starting server: ', err);
-  });
+});
 
 app.use(cors())
 app.use(bodyParser.json())
