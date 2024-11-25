@@ -4,6 +4,7 @@ const socket = require('socket.io')
 const { connectRabbitMQ } = require('./services/rabbitmqService');
 const { checkRabbitMQForUser } = require('./services/checkMissed')
 require('dotenv').config()
+const pool = require('./services/db');
 
 const app = express()
 const server = http.createServer(app);
@@ -51,16 +52,25 @@ io.on('connection', (socket) => {
 
   socket.on('sendMessage', async (data) => {
     const { from, to, content } = data;
-    const recipientSocketId = userSocketMap.get(to);
-    const message = { type: "message", from, to, content };
+    try{
+        await pool.query(
+            'INSERT INTO messages (sender, receiver, content) VALUES ($1, $2, $3)',
+            [from, to, content]
+          );
+          
+        const recipientSocketId = userSocketMap.get(to);
+        const message = { type: "message", from, to, content };
 
-    if (recipientSocketId) {
-      io.to(recipientSocketId).emit('receiveMessage', message);
-    } else {
-      const missedQueueName = `missedMessages_${to}`;
-      const channel = await connectRabbitMQ();
-      await channel.assertQueue(missedQueueName, { durable: true });
-      channel.sendToQueue(missedQueueName, Buffer.from(JSON.stringify(message)));
+        if (recipientSocketId) {
+          io.to(recipientSocketId).emit('receiveMessage', message);
+        } else {
+          const missedQueueName = `missedMessages_${to}`;
+          const channel = await connectRabbitMQ();
+          await channel.assertQueue(missedQueueName, { durable: true });
+          channel.sendToQueue(missedQueueName, Buffer.from(JSON.stringify(message)));
+        }
+    } catch (error) {
+        console.error('Error saving message:', error);
     }
   });
 })
