@@ -1,7 +1,7 @@
 import './Chats.css'
 import { useState, ChangeEvent, useEffect } from 'react'
 import { displayError, displayInfo, displaySuccess } from '../Notify/Notify'
-import { getChatHistory, getFriends, searchUsers, sendFriendRequest } from '../../services/Services'
+import { getChatHistory, getFriends, getFriendsPublicKey, searchUsers, sendFriendRequest } from '../../services/Services'
 import userPic from '../../assets/user.jpg' // default
 import pfp1 from '../../assets/1.png' // avatar
 import pfp2 from '../../assets/2.png' // avatar
@@ -54,6 +54,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
   const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [selectedFriendPublicKey, setSelectedFriendPublicKey] = useState<string | null>(null);
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
   const { username } = props;
 
@@ -122,6 +123,8 @@ const Chats: React.FC<ChatsProps> = (props) => {
 
   const selectChat = async (friend: Friend) => {
     setSelectedChat(friend);
+    const { publicKey } = await getFriendsPublicKey(friend.username);
+    setSelectedFriendPublicKey(publicKey);
     try {
         const data = await getChatHistory(friend.username)
     

@@ -30,12 +30,20 @@ export const getRole = () => {
   return fetchWithAuth('api/getUserRole');
 };
 
-export const getFriends = () => {
-  return fetchWithAuth('api/getFriends');
+export const getFriendPublicKey = (username: string) => {
+    return fetchWithAuth(`/api/getPublicKey/${username}`, { method: 'GET' });
+};
+  
+export const searchUsers = (query: string) => {
+    return fetchWithAuth(`/api/searchUsers?query=${query}`, { method: 'GET' });
 };
 
-export const searchUsers = (username: string) => {
-  return fetchWithAuth(`searchUsers/${username}`);
+export const getFriends = () => {
+  return fetchWithAuth('api/getFriends', { method: 'GET' });
+};
+
+export const getFriendsPublicKey = (username: string) => {
+  return fetchWithAuth(`/api/publicKey/${username}`);
 };
 
 export const sendFriendRequest = (friendUsername: string) => {
