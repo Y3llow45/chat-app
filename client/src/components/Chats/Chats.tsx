@@ -9,6 +9,22 @@ import pfp3 from '../../assets/3.png' // avatar
 import pfp4 from '../../assets/4.png' // avatar
 import socket from '../../services/socket'
 import { withUsernameAuth } from '../../contexts/UsernameContext'
+import forge from 'node-forge'
+
+const keyPair = forge.pki.rsa.generateKeyPair(2048);
+const publicKey = forge.pki.publicKeyToPem(keyPair.publicKey);
+const privateKey = forge.pki.privateKeyToPem(keyPair.privateKey);
+
+const encryptMessage = (message: string, recipientPublicKey: string) => {
+  const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
+  return forge.util.encode64(publicKey.encrypt(message));
+};
+
+const decryptMessage = (encryptedMessage: string) => {
+  const encryptedBytes = forge.util.decode64(encryptedMessage);
+  const privateKeyObj = forge.pki.privateKeyFromPem(privateKey);
+  return privateKeyObj.decrypt(encryptedBytes);
+};
 
 interface Friend {
   id: number;
@@ -53,11 +69,12 @@ const Chats: React.FC<ChatsProps> = (props) => {
     fetchFriends();
 
     socket.on('receiveMessage', ({ from, content }) => {
-      setChatHistory((prevChats) => ({
-        ...prevChats,
-        [from]: [...(prevChats[from] || []), { from, content }],
-      }));
-    });
+        const decryptedContent = decryptMessage(content);
+        setChatHistory((prevChats) => ({
+          ...prevChats,
+          [from]: [...(prevChats[from] || []), { from, content: decryptedContent }],
+        }));
+      });
 
     return () => {
       socket.off('receiveMessage');
@@ -66,14 +83,15 @@ const Chats: React.FC<ChatsProps> = (props) => {
 
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedChat) {
-      const message: Message = { from: username, content: newMessage.trim() }
+        const encryptedContent = encryptMessage(newMessage.trim(), selectedChat.publicKey);
+        const message: Message = { from: username, content: newMessage.trim() }
 
-      setChatHistory((prevChats) => ({
-        ...prevChats,
-        [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
-      }));
-      socket.emit('sendMessage', { from: username, to: selectedChat.username, content: newMessage.trim() });
-      setNewMessage('');
+        setChatHistory((prevChats) => ({
+            ...prevChats,
+            [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
+        }));
+        socket.emit('sendMessage', { from: username, to: selectedChat.username, content: encryptedContent });
+        setNewMessage('');
     }
   };
 
