@@ -225,7 +225,7 @@ app.get('/api/getFriends', verifyToken, async (req, res) => {
 app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
     const username = req.username;
     const withUser = req.params.withUser;
-  
+
     try {
       const { rows: messages } = await pool.query(
         `SELECT sender, content, timestamp 
@@ -239,6 +239,22 @@ app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
       res.status(200).json({ messages });
     } catch (error) {
       console.error('Error fetching chat history:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get('/api/publicKey/:username', async (req, res) => {
+    try {
+      const { username } = req.params;
+      const query = 'SELECT public_key FROM users WHERE username = $1';
+      const { rows } = await pool.query(query, [username]);
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json({ publicKey: rows[0].public_key });
+    } catch (error) {
       res.status(500).json({ message: 'Server error' });
     }
 });
