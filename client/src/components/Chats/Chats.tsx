@@ -11,22 +11,13 @@ import socket from '../../services/socket'
 import { withUsernameAuth } from '../../contexts/UsernameContext'
 import forge from 'node-forge'
 
-const keyPair = forge.pki.rsa.generateKeyPair(2048);
-const publicKey = forge.pki.publicKeyToPem(keyPair.publicKey);
-const privateKey = forge.pki.privateKeyToPem(keyPair.privateKey);
-
 const encryptMessage = (message: string, recipientPublicKey: string) => {
   const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
   return forge.util.encode64(publicKey.encrypt(message));
 };
 
-const decryptMessage = (encryptedMessage: string) => {
-  const encryptedBytes = forge.util.decode64(encryptedMessage);
-  const privateKeyObj = forge.pki.privateKeyFromPem(privateKey);
-  return privateKeyObj.decrypt(encryptedBytes);
-};
-
 interface Friend {
+  publicKey: string
   id: number;
   username: string;
   pfp: string;
@@ -54,7 +45,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
   const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
-  const [selectedFriendPublicKey, setSelectedFriendPublicKey] = useState<string | null>(null);
+  const [selectedFriendPublicKey, setSelectedFriendPublicKey] = useState<string>("");
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
   const { username } = props;
 
@@ -82,9 +73,15 @@ const Chats: React.FC<ChatsProps> = (props) => {
     };
   }, []);
 
+  const decryptMessage = (encryptedMessage: string) => {
+    const encryptedBytes = forge.util.decode64(encryptedMessage);
+    const privateKeyObj = forge.pki.privateKeyFromPem(localStorage.getItem('privateKey') || '');
+    return privateKeyObj.decrypt(encryptedBytes);
+  };
+
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedChat) {
-        const encryptedContent = encryptMessage(newMessage.trim(), selectedChat.publicKey);
+        const encryptedContent = encryptMessage(newMessage.trim(), selectedFriendPublicKey);
         const message: Message = { from: username, content: newMessage.trim() }
 
         setChatHistory((prevChats) => ({
