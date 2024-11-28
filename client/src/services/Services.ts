@@ -43,7 +43,7 @@ export const getFriends = () => {
 };
 
 export const getFriendsPublicKey = (username: string) => {
-  return fetchWithAuth(`/api/publicKey/${username}`);
+  return fetchWithAuth(`api/publicKey/${username}`);
 };
 
 export const sendFriendRequest = (friendUsername: string) => {
