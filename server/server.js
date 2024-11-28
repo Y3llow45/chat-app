@@ -28,15 +28,25 @@ app.use(bodyParser.json())
 app.post('/signup', async (req, res) => {
   try {
     const { username, email, password } = req.body
+
+    const keyPair = forge.pki.rsa.generateKeyPair(2048);
+    const publicKey = forge.pki.publicKeyToPem(keyPair.publicKey);
+
+    const hash = await bcrypt.hashSync(password, saltRounds);
+    const encryptedPrivateKey = forge.util.encode64(
+      forge.pki.encryptRsaPrivateKey(keyPair.privateKey, hash)
+    );
+
     const existingUser = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     if (existingUser.length > 0) {
       return res.status(400).json({ message: 'Username already exists' })
     }
-    const hash = await bcrypt.hash(password, saltRounds);
+    
     await pool.query(
-      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4)',
-      [username, email, hash, 'user']
+        'INSERT INTO users (username, email, password, role, public_key, encrypted_private_key) VALUES ($1, $2, $3, $4)',
+        [username, email, password, 'user', hash, publicKey, encryptedPrivateKey]
     );
+
     res.status(201).json({ message: 'Account created' })
   } catch (error) {
     console.error(error)
@@ -59,7 +69,21 @@ app.post('/signin', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     const token = generateToken(user.id, user.username, user.role);
-    res.status(200).json({ message: 'Sign in successful', token, username: user.username })
+
+    const query = 'SELECT password, encrypted_private_key FROM users WHERE username = $1';
+    const { rows } = await pool.query(query, [username]);
+
+    if (rows.length === 0 || !bcrypt.compareSync(password, rows[0].password)) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const hash = bcrypt.hashSync(password, saltRounds);
+    const privateKeyPem = forge.pki.decryptRsaPrivateKey(
+      forge.util.decode64(rows[0].encrypted_private_key),
+      hash
+    );
+
+    res.status(200).json({ message: 'Sign in successful', token, username: user.username, privateKey: forge.pki.privateKeyToPem(privateKeyPem) })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Internal Server Error' })
