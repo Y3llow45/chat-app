@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const verifyToken = require('./middleware/verifyToken')
 const { publishToQueue, connectRabbitMQ } = require('./services/rabbitmqService');
 const pool = require('./services/db');
+const forge = require('node-forge')
 
 const app = express()
 const PORT = parseInt(process.env.PORT, 10)
@@ -44,7 +45,7 @@ app.post('/signup', async (req, res) => {
     }
     
     await pool.query(
-        'INSERT INTO users (username, email, password, role, public_key, encrypted_private_key) VALUES ($1, $2, $3, $4)',
+        'INSERT INTO users (username, email, password, role, public_key, encrypted_private_key) VALUES ($1, $2, $3, $4, $5, $6)',
         [username, email, hash, 'user', publicKey, encryptedPrivateKey]
     );
 
@@ -71,7 +72,7 @@ app.post('/signin', async (req, res) => {
     }
 
     const privateKeyPem = forge.pki.decryptRsaPrivateKey(
-        forge.util.decode64(rows[0].encrypted_private_key),
+        forge.util.decode64(user.encrypted_private_key),
         user.password
     );
 

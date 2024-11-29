@@ -49,11 +49,12 @@ class SignIn extends Component<SignInProps, SignInState> {
         return;
       }
 
-      if (data.token && data.username) {
+      if (data.token && data.username && data.privateKey) {
         setUsername(data.username);
         setUserRole(data.role);
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
+        localStorage.setItem('privateKey', data.privateKey);
         displaySuccess('Logged in');
         navigate('/chats');
       } else {
