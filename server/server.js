@@ -33,6 +33,7 @@ app.post('/signup', async (req, res) => {
     const publicKey = forge.pki.publicKeyToPem(keyPair.publicKey);
 
     const hash = await bcrypt.hashSync(password, saltRounds);
+
     const encryptedPrivateKey = forge.util.encode64(
       forge.pki.encryptRsaPrivateKey(keyPair.privateKey, hash)
     );
@@ -44,7 +45,7 @@ app.post('/signup', async (req, res) => {
     
     await pool.query(
         'INSERT INTO users (username, email, password, role, public_key, encrypted_private_key) VALUES ($1, $2, $3, $4)',
-        [username, email, password, 'user', hash, publicKey, encryptedPrivateKey]
+        [username, email, hash, 'user', publicKey, encryptedPrivateKey]
     );
 
     res.status(201).json({ message: 'Account created' })
@@ -55,8 +56,8 @@ app.post('/signup', async (req, res) => {
 })
 
 app.post('/signin', async (req, res) => {
-  const { username, password } = req.body
   try {
+    const { username, password } = req.body
     const userResult = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     const user = userResult.rows[0];
 
@@ -68,20 +69,13 @@ app.post('/signin', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = generateToken(user.id, user.username, user.role);
 
-    const query = 'SELECT password, encrypted_private_key FROM users WHERE username = $1';
-    const { rows } = await pool.query(query, [username]);
-
-    if (rows.length === 0 || !bcrypt.compareSync(password, rows[0].password)) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const hash = bcrypt.hashSync(password, saltRounds);
     const privateKeyPem = forge.pki.decryptRsaPrivateKey(
-      forge.util.decode64(rows[0].encrypted_private_key),
-      hash
+        forge.util.decode64(rows[0].encrypted_private_key),
+        user.password
     );
+
+    const token = generateToken(user.id, user.username, user.role);
 
     res.status(200).json({ message: 'Sign in successful', token, username: user.username, privateKey: forge.pki.privateKeyToPem(privateKeyPem) })
   } catch (error) {
@@ -269,17 +263,18 @@ app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
 
 app.get('/api/publicKey/:username', async (req, res) => {
     try {
-      const { username } = req.params;
-      const query = 'SELECT public_key FROM users WHERE username = $1';
-      const { rows } = await pool.query(query, [username]);
+        const { username } = req.params;
+        const query = 'SELECT public_key FROM users WHERE username = $1';
+        const { rows } = await pool.query(query, [username]);
   
-      if (rows.length === 0) {
-        return res.status(404).json({ message: 'User not found' });
-      }
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
   
-      res.json({ publicKey: rows[0].public_key });
+        res.json({ publicKey: rows[0].public_key });
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
