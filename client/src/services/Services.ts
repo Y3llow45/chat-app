@@ -31,11 +31,12 @@ export const getRole = () => {
 };
 
 export const getFriendPublicKey = (username: string) => {
-    return fetchWithAuth(`/api/getPublicKey/${username}`, { method: 'GET' });
+    return fetchWithAuth(`api/getPublicKey/${username}`, { method: 'GET' });
 };
   
 export const searchUsers = (query: string) => {
-    return fetchWithAuth(`/api/searchUsers?query=${query}`, { method: 'GET' });
+    console.log(`query, ${query}`)
+    return fetchWithAuth(`searchUsers/${query}`, { method: 'GET' });
 };
 
 export const getFriends = () => {
