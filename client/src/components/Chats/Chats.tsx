@@ -13,7 +13,7 @@ import forge from 'node-forge'
 
 const encryptMessage = (message: string, recipientPublicKey: string) => {
   const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
-  return forge.util.encode64(publicKey.encrypt(message));
+  return forge.util.encode64(publicKey.encrypt(forge.util.encodeUtf8(message)));
 };
 
 interface Friend {
@@ -74,13 +74,20 @@ const Chats: React.FC<ChatsProps> = (props) => {
   }, []);
 
   const decryptMessage = (encryptedMessage: string) => {
-    const encryptedBytes = forge.util.decode64(encryptedMessage);
-    const privateKeyObj = forge.pki.privateKeyFromPem(localStorage.getItem('privateKey') || '');
-    return privateKeyObj.decrypt(encryptedBytes);
+    try{
+        const privateKeyPem = localStorage.getItem('privateKey') || '';
+        const privateKeyObj = forge.pki.privateKeyFromPem(privateKeyPem);
+
+        const decodedMessage = forge.util.decode64(encryptedMessage);
+        return forge.util.decodeUtf8(privateKeyObj.decrypt(decodedMessage));
+    }catch(error){
+        console.error('Failed to decrypt message:', error)
+        return 'Unable to decrypt message'
+    }
   };
 
   const handleSendMessage = () => {
-    if (newMessage.trim() && selectedChat) {
+    if (newMessage.trim() && selectedChat && selectedFriendPublicKey) {
         const encryptedContent = encryptMessage(newMessage.trim(), selectedFriendPublicKey);
         const message: Message = { from: username, content: newMessage.trim() }
 
@@ -130,7 +137,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
             ...prevChats,
             [friend.username]: data.messages.map((msg:any) => ({
               from: msg.sender,
-              content: msg.content,
+              content: decryptMessage(msg.content),
             })),
           }));
         }
