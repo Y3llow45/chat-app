@@ -1,6 +1,6 @@
 import './Chats.css'
 import { useState, ChangeEvent, useEffect } from 'react'
-import { displayError, displayInfo, displaySuccess } from '../Notify/Notify'
+import { displayError, displayInfo, displaySuccess, displayWarning } from '../Notify/Notify'
 import { getChatHistory, getFriends, getFriendsPublicKey, searchUsers, sendFriendRequest } from '../../services/Services'
 import userPic from '../../assets/user.jpg' // default
 import pfp1 from '../../assets/1.png' // avatar
@@ -61,12 +61,17 @@ const Chats: React.FC<ChatsProps> = (props) => {
     fetchFriends();
 
     socket.on('receiveMessage', ({ from, content }) => {
-        const decryptedContent = decryptMessage(content);
-        setChatHistory((prevChats) => ({
-          ...prevChats,
-          [from]: [...(prevChats[from] || []), { from, content: decryptedContent }],
-        }));
-      });
+        try{
+            const decryptedContent = decryptMessage(content);
+            setChatHistory((prevChats) => ({
+                ...prevChats,
+                [from]: [...(prevChats[from] || []), { from, content: decryptedContent }],
+            }));
+        }catch(error) {
+            displayError('Error processing received message');
+            console.error('Error processing received message:', error);
+        }
+    });
 
     return () => {
       socket.off('receiveMessage');
@@ -76,6 +81,10 @@ const Chats: React.FC<ChatsProps> = (props) => {
   const decryptMessage = (encryptedMessage: string) => {
     try{
         const privateKeyPem = localStorage.getItem('privateKey') || '';
+        if (!privateKeyPem) {
+            displayWarning('Private key is missing')
+            return '';
+        }
         const privateKeyObj = forge.pki.privateKeyFromPem(privateKeyPem);
 
         const decodedMessage = forge.util.decode64(encryptedMessage);
@@ -126,6 +135,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
   }
 
   const selectChat = async (friend: Friend) => {
+    if (selectedChat?.username === friend.username) return;
     setSelectedChat(friend);
     const { publicKey } = await getFriendsPublicKey(friend.username);
     setSelectedFriendPublicKey(publicKey);
@@ -171,7 +181,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
         </div>
         <div className='friends-list-container'>
           {friends.map((friend) => (
-            <div key={friend.id} className='friend-item' onClick={() => selectChat(friend)}>
+            <div key={friend.id} className={`friend-item ${selectedChat?.username === friend.username ? 'disabled' : ''}`} onClick={() => selectChat(friend)}>
               <img src={friend.pfp} alt='Profile' className='friend-pfp' />
               <span>{friend.username}</span>
             </div>

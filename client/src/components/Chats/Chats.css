@@ -54,6 +54,11 @@
   background-color: #f1f1f1;
 }
 
+.friend-item.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 .friend-pfp {
   width: 40px;
   height: 40px;
