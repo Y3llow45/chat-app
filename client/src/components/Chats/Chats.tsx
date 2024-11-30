@@ -53,15 +53,24 @@ const Chats: React.FC<ChatsProps> = (props) => {
       }
     };
 
+    const storedChatHistory = localStorage.getItem('chatHistory');
+    if (storedChatHistory) {
+      setChatHistory(JSON.parse(storedChatHistory));
+    }
+
     fetchFriends();
 
     socket.on('receiveMessage', ({ from, content }) => {
         try{
             const decryptedContent = decryptMessage(content);
-            setChatHistory((prevChats) => ({
-                ...prevChats,
-                [from]: [...(prevChats[from] || []), { from, content: decryptedContent }],
-            }));
+            setChatHistory((prevChats) => {
+                const updatedChats = {
+                    ...prevChats,
+                    [from]: [...(prevChats[from] || []), { from, content: decryptedContent }],
+                };
+                updateChatHistoryInStorage(from, updatedChats);
+                return updatedChats;
+            });
         }catch(error) {
             displayError('Error processing received message')
             console.error('Error processing received message:', error);
@@ -72,6 +81,20 @@ const Chats: React.FC<ChatsProps> = (props) => {
       socket.off('receiveMessage');
     };
   }, []);
+
+  const updateChatHistoryInStorage = (friendUsername: string, updatedChats: { [key: string]: Message[] }) => {
+    localStorage.setItem(`chat-${friendUsername}`, JSON.stringify(updatedChats));
+  };
+
+  const loadChatHistory = (friendUsername: string) => {
+    const storedChatHistory = localStorage.getItem(`chat-${friendUsername}`);
+    if (storedChatHistory) {
+      setChatHistory((prevChats) => ({
+        ...prevChats,
+        [friendUsername]: JSON.parse(storedChatHistory),
+      }));
+    }
+  };
 
   const decryptMessage = (encryptedMessage: string) => {
     try{
@@ -100,10 +123,14 @@ const Chats: React.FC<ChatsProps> = (props) => {
         const encryptedContent = encryptMessage(newMessage.trim(), selectedFriendPublicKey);
         const message: Message = { from: username, content: newMessage.trim() }
 
-        setChatHistory((prevChats) => ({
-            ...prevChats,
-            [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
-        }));
+        setChatHistory((prevChats) => {
+            const updatedChats = {
+                ...prevChats,
+                [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
+            };
+            localStorage.setItem('chatHistory', JSON.stringify(updatedChats));
+            return updatedChats;
+        });
 
         socket.emit('sendMessage', { from: username, to: selectedChat.username, content: encryptedContent });
         setNewMessage('');
@@ -142,11 +169,14 @@ const Chats: React.FC<ChatsProps> = (props) => {
     const { publicKey } = await getFriendsPublicKey(friend.username);
     setSelectedFriendPublicKey(publicKey);
 
+    loadChatHistory(friend.username);
+
     try {
         const data = await getChatHistory(friend.username)
     
         if (data.messages) {
-          setChatHistory((prevChats) => ({
+          setChatHistory((prevChats) => {
+            const updatedChats = {
                 ...prevChats,
                 [friend.username]: data.messages.map((msg: any) => {
                     const decryptedContent = decryptMessage(msg.content);
@@ -155,7 +185,10 @@ const Chats: React.FC<ChatsProps> = (props) => {
                         content: decryptedContent,
                     };
                 }),
-            }));
+            };
+            updateChatHistoryInStorage(friend.username, updatedChats);
+            return updatedChats;
+          });
         }
       } catch (error) {
         console.error('Error loading chat history:', error);
