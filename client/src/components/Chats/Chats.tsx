@@ -11,11 +11,6 @@ import socket from '../../services/socket'
 import { withUsernameAuth } from '../../contexts/UsernameContext'
 import forge from 'node-forge'
 
-const encryptMessage = (message: string, recipientPublicKey: string) => {
-  const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
-  return forge.util.encode64(publicKey.encrypt(forge.util.encodeUtf8(message)));
-};
-
 interface Friend {
   publicKey: string
   id: number;
@@ -68,7 +63,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
                 [from]: [...(prevChats[from] || []), { from, content: decryptedContent }],
             }));
         }catch(error) {
-            displayError('Error processing received message');
+            displayError('Error processing received message')
             console.error('Error processing received message:', error);
         }
     });
@@ -91,8 +86,13 @@ const Chats: React.FC<ChatsProps> = (props) => {
         return forge.util.decodeUtf8(privateKeyObj.decrypt(decodedMessage));
     }catch(error){
         console.error('Failed to decrypt message:', error)
-        return 'Unable to decrypt message'
+        return '[System] Unable to decrypt message'
     }
+  };
+
+  const encryptMessage = (message: string, recipientPublicKey: string) => {
+    const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
+    return forge.util.encode64(publicKey.encrypt(forge.util.encodeUtf8(message)));
   };
 
   const handleSendMessage = () => {
@@ -104,6 +104,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
             ...prevChats,
             [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
         }));
+
         socket.emit('sendMessage', { from: username, to: selectedChat.username, content: encryptedContent });
         setNewMessage('');
     }
@@ -137,19 +138,24 @@ const Chats: React.FC<ChatsProps> = (props) => {
   const selectChat = async (friend: Friend) => {
     if (selectedChat?.username === friend.username) return;
     setSelectedChat(friend);
+
     const { publicKey } = await getFriendsPublicKey(friend.username);
     setSelectedFriendPublicKey(publicKey);
+
     try {
         const data = await getChatHistory(friend.username)
     
         if (data.messages) {
           setChatHistory((prevChats) => ({
-            ...prevChats,
-            [friend.username]: data.messages.map((msg:any) => ({
-              from: msg.sender,
-              content: decryptMessage(msg.content),
-            })),
-          }));
+                ...prevChats,
+                [friend.username]: data.messages.map((msg: any) => {
+                    const decryptedContent = decryptMessage(msg.content);
+                    return {
+                        from: msg.sender,
+                        content: decryptedContent,
+                    };
+                }),
+            }));
         }
       } catch (error) {
         console.error('Error loading chat history:', error);
