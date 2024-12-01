@@ -40,17 +40,20 @@ const Chats: React.FC<ChatsProps> = (props) => {
   const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [myPublicKey, setMyPublicKey] = useState<string>("");
   const [selectedFriendPublicKey, setSelectedFriendPublicKey] = useState<string>("");
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
   const { username } = props;
 
   useEffect(() => {
     const fetchFriends = async () => {
-      const data = await getFriends();
-      if (data.friends) {
-        setFriends(data.friends);
-        localStorage.setItem('friends', JSON.stringify(data.friends));
-      }
+        const { publicKey } = await getFriendsPublicKey(username);
+        setMyPublicKey(publicKey);
+        const data = await getFriends();
+        if (data.friends) {
+            setFriends(data.friends);
+            localStorage.setItem('friends', JSON.stringify(data.friends));
+        }
     };
 
     fetchFriends();
@@ -90,14 +93,23 @@ const Chats: React.FC<ChatsProps> = (props) => {
     }
   };
 
-  const encryptMessage = (message: string, recipientPublicKey: string) => {
-    const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
-    return forge.util.encode64(publicKey.encrypt(forge.util.encodeUtf8(message)));
+  const encryptMessageWithMultipleKeys = (message: string, publicKey1: string, publicKey2: string) => {
+    const publicKeyObj1 = forge.pki.publicKeyFromPem(publicKey1);
+    const publicKeyObj2 = forge.pki.publicKeyFromPem(publicKey2);
+  
+    const encryptedForUser = forge.util.encode64(publicKeyObj1.encrypt(forge.util.encodeUtf8(message)));
+    const encryptedForFriend = forge.util.encode64(publicKeyObj2.encrypt(forge.util.encodeUtf8(message)));
+  
+    return { encryptedForUser, encryptedForFriend };
   };
-
+  
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedChat && selectedFriendPublicKey) {
-        const encryptedContent = encryptMessage(newMessage.trim(), selectedFriendPublicKey);
+        const { encryptedForUser, encryptedForFriend } = encryptMessageWithMultipleKeys(
+            newMessage.trim(),
+            myPublicKey,
+            selectedFriendPublicKey
+          );
         const message: Message = { from: username, content: newMessage.trim() }
 
         setChatHistory((prevChats) => ({
@@ -105,7 +117,12 @@ const Chats: React.FC<ChatsProps> = (props) => {
             [selectedChat.username]: [...(prevChats[selectedChat.username] || []), message],
         }));
 
-        socket.emit('sendMessage', { from: username, to: selectedChat.username, content: encryptedContent });
+        socket.emit('sendMessage', {
+            from: username,
+            to: selectedChat.username,
+            content: encryptedForFriend,
+            content_sender: encryptedForUser
+        });
         setNewMessage('');
     }
   };
