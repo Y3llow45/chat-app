@@ -47,12 +47,22 @@ const Chats: React.FC<ChatsProps> = (props) => {
 
   useEffect(() => {
     const fetchFriends = async () => {
-        const { publicKey } = await getFriendsPublicKey(username);
-        setMyPublicKey(publicKey);
-        const data = await getFriends();
-        if (data.friends) {
-            setFriends(data.friends);
-            localStorage.setItem('friends', JSON.stringify(data.friends));
+        try {
+            const publicKeyResponse = await getFriendsPublicKey(username);
+            if (!publicKeyResponse.publicKey) {
+                displayWarning('Failed to fetch your public key');
+                return;
+            }
+            setMyPublicKey(publicKeyResponse.publicKey);
+    
+            const data = await getFriends();
+            if (data.friends) {
+                setFriends(data.friends);
+                localStorage.setItem('friends', JSON.stringify(data.friends));
+            }
+        } catch (error) {
+            console.error('Error fetching friends or public key:', error);
+            displayError('Unable to load friends or public key');
         }
     };
 
@@ -76,22 +86,27 @@ const Chats: React.FC<ChatsProps> = (props) => {
     };
   }, []);
 
-  const decryptMessage = (encryptedMessage: string) => {
-    try{
+  const decryptMessage = (encryptedMessage: string | null) => {
+    try {
+        if (!encryptedMessage) {
+            displayWarning('Encrypted message is missing');
+            return '[System] Message unavailable';
+        }
+
         const privateKeyPem = localStorage.getItem('privateKey') || '';
         if (!privateKeyPem) {
-            displayWarning('Private key is missing')
-            return '';
+            displayWarning('Private key is missing');
+            return '[System] Message unavailable';
         }
         const privateKeyObj = forge.pki.privateKeyFromPem(privateKeyPem);
 
         const decodedMessage = forge.util.decode64(encryptedMessage);
         return forge.util.decodeUtf8(privateKeyObj.decrypt(decodedMessage));
-    }catch(error){
-        console.error('Failed to decrypt message:', error)
-        return '[System] Unable to decrypt message'
+    } catch (error) {
+        console.error('Failed to decrypt message:', error);
+        return '[System] Unable to decrypt message';
     }
-  };
+};
 
   const encryptMessageWithMultipleKeys = (message: string, publicKey1: string, publicKey2: string) => {
     const publicKeyObj1 = forge.pki.publicKeyFromPem(publicKey1);
@@ -156,14 +171,19 @@ const Chats: React.FC<ChatsProps> = (props) => {
     if (selectedChat?.username === friend.username) return;
     setSelectedChat(friend);
 
-    const { publicKey } = await getFriendsPublicKey(friend.username);
-    setSelectedFriendPublicKey(publicKey);
-
     try {
+        const { publicKey } = await getFriendsPublicKey(friend.username);
+        if (!publicKey) {
+            displayWarning(`Could not fetch public key for ${friend.username}`);
+            setSelectedFriendPublicKey('');
+            return;
+        }
+        setSelectedFriendPublicKey(publicKey);
+
         const data = await getChatHistory(friend.username)
     
         if (data.messages) {
-          setChatHistory((prevChats) => ({
+            setChatHistory((prevChats) => ({
                 ...prevChats,
                 [friend.username]: data.messages.map((msg: any) => {
                     const decryptedContent = decryptMessage(msg.content);
@@ -176,6 +196,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
         }
       } catch (error) {
         console.error('Error loading chat history:', error);
+        displayError('Unable to load chat history');
       }
   }
 
@@ -194,7 +215,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
             <div className='search-dropdown'>
               {searchResults.map((user, index) => (
                 <div key={user._id || index} className='search-result-item'>
-                  <img src={images[user.profilePic]} alt='Profile' className='search-pfp' />
+                  <img src={images[user.profilePic] || userPic} alt='Profile' className='search-pfp' />
                   <span>{user.username}</span>
                   <button className='add-friend-btn' onClick={() => handleAddFriend(user.username)}>Add</button>
                 </div>

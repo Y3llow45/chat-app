@@ -51,11 +51,11 @@ io.on('connection', (socket) => {
   })
 
   socket.on('sendMessage', async (data) => {
-    const { from, to, content } = data;
+    const { from, to, content, content_sender } = data;
     try{
         await pool.query(
-            'INSERT INTO messages (sender, receiver, content) VALUES ($1, $2, $3)',
-            [from, to, content]
+            'INSERT INTO messages (sender, receiver, content, content_sender) VALUES ($1, $2, $3, $4)',
+            [from, to, content, content_sender]
           );
           
         const recipientSocketId = userSocketMap.get(to);
