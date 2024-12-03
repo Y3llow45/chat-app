@@ -2,6 +2,7 @@ import './index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.js'
+import ErrorBoundry from './components/ErrorBoundry/ErrorBoundry.js'
 import { BrowserRouter } from 'react-router-dom'
 import { UsernameProvider } from './contexts/UsernameContext.js';
 import { RoleProvider } from './contexts/RoleContext.js'
@@ -10,6 +11,7 @@ import { NotificationProvider } from './contexts/NotificationContext.js'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <ErrorBoundry>
     <BrowserRouter>
       <UsernameProvider>
         <RoleProvider>
@@ -21,5 +23,6 @@ createRoot(document.getElementById('root')!).render(
         </RoleProvider>
       </UsernameProvider>
     </BrowserRouter>
+    </ErrorBoundry>
   </StrictMode>,
 )
