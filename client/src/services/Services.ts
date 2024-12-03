@@ -35,7 +35,6 @@ export const getFriendPublicKey = (username: string) => {
 };
   
 export const searchUsers = (query: string) => {
-    console.log(`query, ${query}`)
     return fetchWithAuth(`searchUsers/${query}`, { method: 'GET' });
 };
 
@@ -70,12 +69,8 @@ export const acceptFriendRequest = (requesterUsername: string) => {
   });
 };
 
-export const getChatHistory = async (username: string, offset: number = 0, limit: number = 10) => {
-    const response = await fetch(`/api/chatHistory/${username}?offset=${offset}&limit=${limit}`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    });
-    return response.json();
+export const getChatHistory = async (username: string, offset: number = 0) => {
+    return fetchWithAuth(`api/chatHistory/${username}/${offset}`)
 };
 
 export const signUp = (username: string, email: string, password: string) => {

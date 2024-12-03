@@ -35,31 +35,34 @@ interface ChatsProps {
 }
 
 const Chats: React.FC<ChatsProps> = (props) => {
-  const [friends, setFriends] = useState<Friend[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState<{ [key: string]: Message[] }>({});
-  const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<User[]>([]);
-  const [myPublicKey, setMyPublicKey] = useState<string>("");
-  const [selectedFriendPublicKey, setSelectedFriendPublicKey] = useState<string>("");
-  const chatEndRef = useRef<HTMLDivElement>
-  const images = [userPic, pfp1, pfp2, pfp3, pfp4]
-  const { username } = props;
+    const initialChatHistory = localStorage.getItem('chat-test') 
+    ? JSON.parse(localStorage.getItem('chat-test') || '{}') 
+    : {};
+    const [friends, setFriends] = useState<Friend[]>([]);
+    const [newMessage, setNewMessage] = useState('');
+    const [chatHistory, setChatHistory] = useState<{ [key: string]: Message[] }>({initialChatHistory});
+    const [selectedChat, setSelectedChat] = useState<Friend | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [searchResults, setSearchResults] = useState<User[]>([]);
+    const [myPublicKey, setMyPublicKey] = useState<string>("");
+    const [selectedFriendPublicKey, setSelectedFriendPublicKey] = useState<string>("");
+    const chatEndRef = useRef<HTMLDivElement | null>(null);
+    const images = [userPic, pfp1, pfp2, pfp3, pfp4]
+    const { username } = props;
 
-  useEffect(() => {
-    if (selectedChat) {
-      const chatKey = `chat-${selectedChat.username}`;
-      const cachedMessages = localStorage.getItem(chatKey);
+    useEffect(() => {
+        if (selectedChat) {
+            const chatKey = `chat-${selectedChat.username}`;
+            const cachedMessages = localStorage.getItem(chatKey);
   
-      if (cachedMessages) {
-        setChatHistory((prevChats) => ({
-          ...prevChats,
-          [selectedChat.username]: JSON.parse(cachedMessages),
+        if (cachedMessages) {
+            setChatHistory((prevChats) => ({
+            ...prevChats,
+            [selectedChat.username]: JSON.parse(cachedMessages),
         }));
-      } else {
-        fetchInitialMessages();
-      }
+        } else {
+            fetchInitialMessages();
+        }
     }
   }, [selectedChat]);
 
@@ -113,7 +116,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
   const fetchInitialMessages = async () => {
     if (!selectedChat) return;
     try {
-      const { messages } = await getChatHistory(selectedChat.username, 0, 10);
+      const { messages } = await getChatHistory(selectedChat.username, 0);
       const decryptedMessages = messages.map((msg: any) => ({
         from: msg.sender,
         content: decryptMessage(msg.content),
@@ -132,7 +135,9 @@ const Chats: React.FC<ChatsProps> = (props) => {
   };
 
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const decryptMessage = (encryptedMessage: string | null) => {
@@ -256,7 +261,7 @@ const Chats: React.FC<ChatsProps> = (props) => {
       const offset = currentMessages.length;
   
       try {
-        const { messages } = await getChatHistory(selectedChat.username, offset, 10);
+        const { messages } = await getChatHistory(selectedChat.username, offset);
         if (messages.length > 0) {
           const decryptedMessages = messages.map((msg: any) => ({
             from: msg.sender,

@@ -241,10 +241,12 @@ app.get('/api/getFriends', verifyToken, async (req, res) => {
   }
 })
 
-app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
+app.get('/api/chatHistory/:withUser/:offset', verifyToken, async (req, res) => {
     const username = req.username;
     const withUser = req.params.withUser;
-    const { offset = 0, limit = 10} = req.query;
+    const offset = req.params.offset;
+    const limit = 10;
+    console.log('chat history')
   
     try {
       const { rows: messages } = await pool.query(
