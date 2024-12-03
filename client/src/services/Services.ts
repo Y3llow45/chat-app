@@ -70,11 +70,13 @@ export const acceptFriendRequest = (requesterUsername: string) => {
   });
 };
 
-export const getChatHistory = (requesterUsername: string) => {
-    return fetchWithAuth(`api/chatHistory/${requesterUsername}`, {
-      method: 'GET'
+export const getChatHistory = async (username: string, offset: number = 0, limit: number = 10) => {
+    const response = await fetch(`/api/chatHistory/${username}?offset=${offset}&limit=${limit}`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
-  };
+    return response.json();
+};
 
 export const signUp = (username: string, email: string, password: string) => {
   let user = {

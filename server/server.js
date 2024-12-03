@@ -244,6 +244,7 @@ app.get('/api/getFriends', verifyToken, async (req, res) => {
 app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
     const username = req.username;
     const withUser = req.params.withUser;
+    const { offset = 0, limit = 10} = req.query;
   
     try {
       const { rows: messages } = await pool.query(
@@ -256,8 +257,9 @@ app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
          FROM messages 
          WHERE (sender = $1 AND receiver = $2) 
             OR (sender = $2 AND receiver = $1)
-         ORDER BY timestamp`,
-        [username, withUser]
+         ORDER BY timestamp DESC
+         LIMIT $3 OFFSET $4`,
+        [username, withUser, limit, offset]
       );
   
       res.status(200).json({ messages });
@@ -265,7 +267,7 @@ app.get('/api/chatHistory/:withUser', verifyToken, async (req, res) => {
       console.error('Error fetching chat history:', error);
       res.status(500).json({ message: 'Server error' });
     }
-});  
+});
 
 app.get('/api/publicKey/:username', async (req, res) => {
     try {

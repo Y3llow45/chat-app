@@ -10,6 +10,7 @@ import pfp4 from '../../assets/4.png' // avatar
 import socket from '../../services/socket'
 import { withUsernameAuth } from '../../contexts/UsernameContext'
 import forge from 'node-forge'
+import { useRef } from 'react';
 
 interface Friend {
   publicKey: string
@@ -42,8 +43,31 @@ const Chats: React.FC<ChatsProps> = (props) => {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [myPublicKey, setMyPublicKey] = useState<string>("");
   const [selectedFriendPublicKey, setSelectedFriendPublicKey] = useState<string>("");
+  const chatEndRef = useRef<HTMLDivElement>
   const images = [userPic, pfp1, pfp2, pfp3, pfp4]
   const { username } = props;
+
+  useEffect(() => {
+    if (selectedChat) {
+      const chatKey = `chat-${selectedChat.username}`;
+      const cachedMessages = localStorage.getItem(chatKey);
+  
+      if (cachedMessages) {
+        setChatHistory((prevChats) => ({
+          ...prevChats,
+          [selectedChat.username]: JSON.parse(cachedMessages),
+        }));
+      } else {
+        fetchInitialMessages();
+      }
+    }
+  }, [selectedChat]);
+
+  useEffect(() => {
+    if (selectedChat && chatHistory[selectedChat.username]?.length > 0) {
+      scrollToBottom();
+    }
+  }, [selectedChat, chatHistory]);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -85,6 +109,31 @@ const Chats: React.FC<ChatsProps> = (props) => {
       socket.off('receiveMessage');
     };
   }, []);
+
+  const fetchInitialMessages = async () => {
+    if (!selectedChat) return;
+    try {
+      const { messages } = await getChatHistory(selectedChat.username, 0, 10);
+      const decryptedMessages = messages.map((msg: any) => ({
+        from: msg.sender,
+        content: decryptMessage(msg.content),
+      }));
+  
+      setChatHistory((prevChats) => ({
+        ...prevChats,
+        [selectedChat.username]: decryptedMessages,
+      }));
+  
+      const chatKey = `chat-${selectedChat.username}`;
+      localStorage.setItem(chatKey, JSON.stringify(decryptedMessages));
+    } catch (error) {
+      console.error('Error fetching initial messages:', error);
+    }
+  };
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const decryptMessage = (encryptedMessage: string | null) => {
     try {
@@ -200,6 +249,33 @@ const Chats: React.FC<ChatsProps> = (props) => {
       }
   }
 
+  const handleScroll = async (e: React.UIEvent<HTMLDivElement>) => {
+    if (e.currentTarget.scrollTop === 0 && selectedChat) {
+      const chatKey = `chat-${selectedChat.username}`;
+      const currentMessages = chatHistory[selectedChat.username] || [];
+      const offset = currentMessages.length;
+  
+      try {
+        const { messages } = await getChatHistory(selectedChat.username, offset, 10);
+        if (messages.length > 0) {
+          const decryptedMessages = messages.map((msg: any) => ({
+            from: msg.sender,
+            content: decryptMessage(msg.content),
+          }));
+  
+          setChatHistory((prevChats) => ({
+            ...prevChats,
+            [selectedChat.username]: [...decryptedMessages, ...prevChats[selectedChat.username] || []],
+          }));
+  
+          localStorage.setItem(chatKey, JSON.stringify(chatHistory[selectedChat.username]));
+        }
+      } catch (error) {
+        console.error('Error loading more messages:', error);
+      }
+    }
+  };
+
   return (
     <div className='chats-container'>
       <div className='friends-search-container'>
@@ -236,12 +312,13 @@ const Chats: React.FC<ChatsProps> = (props) => {
       <div className='chat-container'>
         {selectedChat ? (
           <>
-            <div className='messages-container'>
+            <div className='messages-container' onScroll={handleScroll}>
               {(chatHistory[selectedChat.username] || []).map((msg, index) => (
                 <div key={index} className={`message ${msg.from === username ? 'my-message' : 'friend-message'}`}>
                   <p>{msg.content}</p>
                 </div>
               ))}
+              <div ref={chatEndRef}></div>
             </div>
             <div className='input-container'>
               <input
