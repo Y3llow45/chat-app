@@ -67,12 +67,6 @@ const Chats: React.FC<ChatsProps> = (props) => {
   }, [selectedChat]);
 
   useEffect(() => {
-    if (selectedChat && chatHistory[selectedChat.username]?.length > 0) {
-      scrollToBottom();
-    }
-  }, [selectedChat, chatHistory]);
-
-  useEffect(() => {
     const fetchFriends = async () => {
         try {
             const publicKeyResponse = await getFriendsPublicKey(username);
@@ -117,26 +111,22 @@ const Chats: React.FC<ChatsProps> = (props) => {
     if (!selectedChat) return;
     try {
       const { messages } = await getChatHistory(selectedChat.username, 0);
-      const decryptedMessages = messages.map((msg: any) => ({
-        from: msg.sender,
-        content: decryptMessage(msg.content),
-      }));
-  
-      setChatHistory((prevChats) => ({
-        ...prevChats,
-        [selectedChat.username]: decryptedMessages,
-      }));
-  
-      const chatKey = `chat-${selectedChat.username}`;
-      localStorage.setItem(chatKey, JSON.stringify(decryptedMessages));
+      if (messages && Array.isArray(messages)) {
+        const decryptedMessages = messages.map((msg: any) => ({
+          from: msg.sender,
+          content: decryptMessage(msg.content),
+        }));
+        setChatHistory((prevChats) => ({
+          ...prevChats,
+          [selectedChat.username]: decryptedMessages,
+        }));
+        const chatKey = `chat-${selectedChat.username}`;
+        localStorage.setItem(chatKey, JSON.stringify(decryptedMessages));
+      } else {
+        console.warn('No messages found for the selected chat.');
+      }
     } catch (error) {
       console.error('Error fetching initial messages:', error);
-    }
-  };
-
-  const scrollToBottom = () => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -247,6 +237,8 @@ const Chats: React.FC<ChatsProps> = (props) => {
                     };
                 }),
             }));
+        } else {
+            console.warn(`No messages found for user: ${friend.username}`);
         }
       } catch (error) {
         console.error('Error loading chat history:', error);
