@@ -288,27 +288,6 @@ app.get('/api/publicKey/:username', async (req, res) => {
     }
 });
 
-app.get('/clear', async (req, res) => {
-  try {
-    const username = 'bobi';
-    const secondUsername = 'test';
-
-    const clearUserDataQuery = `
-      UPDATE users 
-      SET pending_requests = '{}', friends = '{}' 
-      WHERE username = $1
-    `;
-
-    await pool.query(clearUserDataQuery, [username]);
-    await pool.query(clearUserDataQuery, [secondUsername]);
-
-    res.status(200).json({ message: 'Data cleared successfully' });
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Server error' })
-  }
-})
-
 app.get('/check/:type/:input', async (req, res) => {
   try {
     const { type, input } = req.params

@@ -1,5 +1,5 @@
 import { withUsernameAuth } from '../../contexts/UsernameContext';
-import { acceptFriendRequest, clear } from '../../services/Services';
+import { acceptFriendRequest } from '../../services/Services';
 import { useNotification } from '../../contexts/NotificationContext';
 
 interface HeaderProps {
@@ -21,7 +21,6 @@ const Notifications: React.FC<HeaderProps> = () => {
   return (
     <div className='notifications-container'>
       <p>Notification Component</p>
-      <button onClick={clear}>Clear pending requests</button>
       <div className='notifications-list'>
         {notifications.length > 0 ? (
           notifications.map((notification) => (
