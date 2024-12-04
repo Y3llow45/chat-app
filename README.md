@@ -16,16 +16,14 @@ Chato is an encrypted, real-time chat platform built for secure communication wi
 
 ## 📌 Features
 
-1. AES Encryption
+1. RSA Encryption (public and private key)
 2. Real-time messaging
 3. Offline queuing with RabbitMQ
-4. Searchable chat history
-5. Friend requests and notifications
-6. Edit and delete messages
-7. Scalable architecture
+4. Searching for friends and adding them
+5. Scalable architecture
     
 ## 🛠️ Tech Stack
-Frontend:          React, TypeScript, JavaScript, HTML, CSS <br>
+Frontend:          React with TypeScript, HTML, CSS <br>
 Backend:           Express (Node.js) <br>
 Message queuing:   RabbitMQ <br>
 Database:          PostgreSQL <br>
@@ -33,3 +31,5 @@ CI/CD:             GitHub Actions <br>
 Testing:           Cypress and Postman <br>
 
 ## DB tables
+
+## Page images
