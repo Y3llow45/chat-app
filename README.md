@@ -33,3 +33,12 @@ Testing:           Cypress and Postman <br>
 ## DB tables
 
 ## Page images
+![Screenshot (139)](https://github.com/user-attachments/assets/a71e743b-23e7-4d88-83c3-0c8cf7409f94)
+![Screenshot (140)](https://github.com/user-attachments/assets/18c20114-f669-4cb8-913c-4f15b5bac086)
+![Screenshot (141)](https://github.com/user-attachments/assets/0490b7f8-f02c-46d6-853c-26a892f589b7)
+![Screenshot (142)](https://github.com/user-attachments/assets/42d835ae-f716-4cae-8056-68ae4d4db8d8)
+![Screenshot (143)](https://github.com/user-attachments/assets/8b8734a8-8d4d-4c78-8f90-fdb2a95ff346)
+![Screenshot (144)](https://github.com/user-attachments/assets/112922b4-5a73-4499-bd92-f07986fd4f29)
+
+
+
