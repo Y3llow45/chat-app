@@ -30,7 +30,8 @@ Database:          PostgreSQL <br>
 CI/CD:             GitHub Actions <br>
 Testing:           Cypress and Postman <br>
 
-## DB tables
+## DB diagram
+![Screenshot (145)](https://github.com/user-attachments/assets/95b692b5-377c-4ec6-80cf-3b5b41e2a549)
 
 ## Page images
 ![Screenshot (139)](https://github.com/user-attachments/assets/a71e743b-23e7-4d88-83c3-0c8cf7409f94)
