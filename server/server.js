@@ -19,3 +19,5 @@ connectRabbitMQ()
 
 app.use(cors())
 app.use(bodyParser.json())
+
+module.exports = app;

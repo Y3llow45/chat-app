@@ -4,10 +4,14 @@ const pool = require('../services/db');
 const generateToken = require('../services/genToken');
 
 const saltRounds = parseInt(process.env.SALT_ROUNDS, 10);
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/;
 
 exports.signup = async (req, res) => {
     try {
         const { username, email, password } = req.body
+        if (!passwordPattern.test(password)) {
+            return res.status(403).json({ message: 'Weak password' })
+        }
     
         const keyPair = forge.pki.rsa.generateKeyPair(2048);
         const publicKey = forge.pki.publicKeyToPem(keyPair.publicKey);
