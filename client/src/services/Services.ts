@@ -24,7 +24,7 @@ const fetchWithAuth = (endpoint: string, options: RequestInit = {}) => {
 };
 
 export const updatePfp = (index: number) => {
-  return fetchWithAuth(`users/updatePfp/${index}`, {
+  return fetchWithAuth(`updatePfp/${index}`, {
     method: 'PUT',
   });
 };
@@ -34,11 +34,11 @@ export const getRole = () => {
 };
 
 export const getFriendsPublicKey = (username: string) => {
-    return fetchWithAuth(`users/publicKey/${username}`, { method: 'GET' });
+    return fetchWithAuth(`api/publicKey/${username}`, { method: 'GET' });
 };
   
 export const searchUsers = (query: string) => {
-    return fetchWithAuth(`users/searchUsers/${query}`, { method: 'GET' });
+    return fetchWithAuth(`searchUsers/${query}`, { method: 'GET' });
 };
 
 export const getFriends = () => {
@@ -70,7 +70,7 @@ export const signUp = (username: string, email: string, password: string) => {
     password,
   };
 
-  return fetch(`${url}auth/signup`, {
+  return fetch(`${url}signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export const signIn = (username: string, password: string) => {
     password,
   };
 
-  return fetch(`${url}auth/signin`, {
+  return fetch(`${url}signin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export const signIn = (username: string, password: string) => {
 };
 
 export const checkDuplicate = (type: string, username: string) => {
-  return fetch(`${url}auth/check/${type}/${username}`, {
+  return fetch(`${url}check/${type}/${username}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
