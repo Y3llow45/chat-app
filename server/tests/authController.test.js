@@ -14,7 +14,7 @@ describe('POST /signup', () => {
 
     expect(response.status).toBe(201);
     expect(response.body.message).toBe('Account created');
-  });
+    });
 
     it('should return error if username already exists', async () => {
         await request(app)
