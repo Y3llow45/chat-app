@@ -28,7 +28,7 @@ Backend:           Express (Node.js) <br>
 Message queuing:   RabbitMQ <br>
 Database:          PostgreSQL <br>
 CI/CD:             GitHub Actions <br>
-Testing:           Cypress and Postman <br>
+Testing:           Postman <br>
 
 ## DB diagram
 ![Screenshot (145)](https://github.com/user-attachments/assets/95b692b5-377c-4ec6-80cf-3b5b41e2a549)
